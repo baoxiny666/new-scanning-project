@@ -8,7 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan("com.tglh.newscanningproject.**")
-@MapperScan("com.tglh.newscanningproject.**")
+@MapperScan("com.tglh.newscanningproject.scanning.mapper")
 public class NewScanningProjectApplication {
 
     public static void main(String[] args) {

@@ -43,20 +43,20 @@ public class UserController {
         user.setUserPwd(twoSecret);
 
         //去往数据库查询是否有此用户
-        Map checkUserMap = userService.loginCheck(user);
+        User checkUserBack = userService.loginCheck(user);
 
         //设置存放 redis 的前置标识
         String lhtg_redis_flag = "bxyxxc:qigcyj:";
 
         //检查用户名 密码
-        if(checkUserMap != null){
+        if(checkUserBack != null){
             //获取查询回来的用户编码和密码
-            String userPassBack = checkUserMap.get("userPass").toString();
-            String userNoBack = checkUserMap.get("userNo").toString();
+            String userPwdBack = checkUserBack.getUserPwd();
+            String userNoBack = checkUserBack.getUserNo();
             //拼接jwt秘钥
             String totalSecret =  lhtg_redis_flag+""+userNo;
             //如果返回的密码和前端传过来的密码一致
-            if(userPwd.equals(userPassBack)) {
+            if(twoSecret.equals(userPwdBack)) {
                 String token= JwtUtil.sign(totalSecret);
                 redisTemplate.opsForValue().set(totalSecret,token);
                 //设置token有效的时间
@@ -64,10 +64,9 @@ public class UserController {
                 JSONObject obj = new JSONObject();
                 JSONObject obj_inner = new JSONObject();
                 obj_inner.put("token",token);
-                obj_inner.put("obj","flag");
-                obj_inner.put("userNo", userNoBack);
+                obj_inner.put("user", AesUtil.encrypt(JSON.toJSONString(checkUserBack),"87a1ec63db4c1d34"));
                 obj.put("code",200);
-                obj.put("content",obj_inner);
+                obj.put("data",obj_inner);
                 obj.put("isSuccess",true);
                 return JSON.toJSONString(obj);
             }else {

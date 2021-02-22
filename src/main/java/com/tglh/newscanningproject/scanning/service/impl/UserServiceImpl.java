@@ -13,8 +13,8 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
 
     @Override
-    public Map loginCheck(User user) {
-        Map loginMap = userMapper.loginCheck(user);
-        return loginMap;
+    public User loginCheck(User user) {
+        User loginCheckBack = userMapper.loginCheck(user);
+        return loginCheckBack;
     }
 }

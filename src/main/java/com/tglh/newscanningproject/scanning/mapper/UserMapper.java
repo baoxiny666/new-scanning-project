@@ -7,5 +7,5 @@ import java.util.Map;
 @Repository
 public interface UserMapper {
     //验证登录的正确性
-    public Map loginCheck(User user);
+    public User loginCheck(User user);
 }

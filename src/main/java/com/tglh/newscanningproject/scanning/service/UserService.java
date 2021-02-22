@@ -5,5 +5,5 @@ import com.tglh.newscanningproject.scanning.entity.User;
 import java.util.Map;
 
 public interface UserService {
-   Map loginCheck(User user);
+   User loginCheck(User user);
 }

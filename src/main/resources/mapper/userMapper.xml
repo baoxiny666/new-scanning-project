@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tglh.newscanningproject.scanning.mapper.UserMapper">
-    <select id="loginCheck" parameterType="com.tglh.newscanningproject.scanning.entity.User"  resultType="java.util.Map">
+    <select id="loginCheck" parameterType="com.tglh.newscanningproject.scanning.entity.User"  resultType="com.tglh.newscanningproject.scanning.entity.User">
         select
             id,
             user_no userNo,
@@ -15,10 +15,10 @@
             DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') createTime,
             DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') updateTime,
             DATE_FORMAT(login_time,'%Y-%m-%d %H:%i:%s') loginTime,
-            userStatus
-        from back_manage_user
+            user_status userStatus
+        from sys_users
         where user_no= #{userNo}
-        and user_pwd= #{passWord}
+        and user_pwd= #{userPwd}
     </select>
 </mapper>
 
