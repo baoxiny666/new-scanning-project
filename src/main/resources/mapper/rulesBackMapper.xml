@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tglh.newscanningproject.scanning.mapper.RulesBackMapper">
+    <select id="selectTree"    resultType="com.tglh.newscanningproject.scanning.entity.DepartMent">
+        select
+            id,
+            depart_name departName,
+            depart_pid departPid
+        from sys_department
+    </select>
+</mapper>
+

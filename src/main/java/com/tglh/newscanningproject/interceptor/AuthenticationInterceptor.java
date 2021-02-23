@@ -17,7 +17,6 @@ import java.security.MessageDigest;
 import java.util.concurrent.TimeUnit;
 
 
-@Component
 public class AuthenticationInterceptor implements HandlerInterceptor {
     @Autowired
     private RedisTemplate<String,Object> redisTemplate;
@@ -29,20 +28,21 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         String sign = request.getHeader("sign");
         String sign_config_key = "1608";
         /*获取时间戳*/
-        String timeStamp = request.getHeader("timeStamp");
+        String time = request.getHeader("time");
         /*获取token*/
         String token = request.getHeader("token");
-
+        /*设置响应的打印流*/
         PrintWriter out = null;
-        if (StringUtils.isEmpty(sign) || StringUtils.isEmpty(timeStamp)) {
+        /*判断sign是否为空*/
+        if (StringUtils.isEmpty(sign) || StringUtils.isEmpty(time)) {
                 JSONObject res = new JSONObject();
                 res.put("isSuccess", false);
-                res.put("errorCode", 407);
+                res.put("code", 407);
                 out = response.getWriter();
                 out.append(res.toString());
                 return false;
         }else{
-            String md5Secret = encryption(encryption(sign_config_key+timeStamp).substring(0,10));
+            String md5Secret = encryption(encryption(sign_config_key+time).substring(0,10));
             if(sign.equals(md5Secret)){
                 String userId = JwtUtil.getUserId(token)==null?"":JwtUtil.getUserId(token);
                 String isRedisUserId = redisTemplate.opsForValue().get(userId) == null?null:redisTemplate.opsForValue().get(userId).toString();
@@ -52,7 +52,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     if(panduan == false){
                         JSONObject res = new JSONObject();
                         res.put("isSuccess", false);
-                        res.put("errorCode", 407);
+                        res.put("code", 407);
                         out = response.getWriter();
                         out.append(res.toJSONString());
                         return false;
@@ -62,7 +62,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 }else{
                     JSONObject res = new JSONObject();
                     res.put("isSuccess", false);
-                    res.put("errorCode", 407);
+                    res.put("code", 407);
                     out = response.getWriter();
                     out.append(res.toJSONString());
                     return false;
@@ -70,7 +70,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             } else{
                 JSONObject res = new JSONObject();
                 res.put("isSuccess", false);
-                res.put("errorCode", 407);
+                res.put("code", 407);
                 out = response.getWriter();
                 out.append(res.toString());
                 response.reset();
