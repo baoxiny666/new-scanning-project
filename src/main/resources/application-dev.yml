@@ -29,7 +29,12 @@ spring:
 mybatis:
   mapper-locations: classpath:mapper/*Mapper.xml
   type-aliases-package: com.tglh.newscanningproject.scanning.entity
-
+#配置虚拟路径的映射
+vocs:
+  user:
+    fileUpload:
+      rootSavePath: D:\图片上传位置
+      rootHttpPath: /upload
 #showSql
 logging:
   level:

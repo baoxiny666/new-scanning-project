@@ -40,6 +40,20 @@ public class RulesBackController {
 
     }
 
+    @RequestMapping("/uploadImg")
+    @ResponseBody
+    public String  uploadImg(){
+        return null;
+    }
+
+
+    @RequestMapping("/delImg")
+    @ResponseBody
+    public String  delImg(){
+        return null;
+    }
+
+
     /**
      * 递归生成菜单树,第一次递归
      */
