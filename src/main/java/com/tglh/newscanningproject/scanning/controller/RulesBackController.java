@@ -1,10 +1,12 @@
 package com.tglh.newscanningproject.scanning.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.tglh.newscanningproject.scanning.entity.DepartMent;
 import com.tglh.newscanningproject.scanning.service.RulesBackService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,12 +19,25 @@ public class RulesBackController {
     private RulesBackService rulesBackService;
     List list = new ArrayList<Integer>();
     @RequestMapping("/departMenu")
-    public List<DepartMent> departMenu(){
-        // 查询出所有的菜单数据集合
-        List<DepartMent> departMenus = rulesBackService.selectTree();
-        // 生成菜单树
-        List<DepartMent> tree = createTree(0, departMenus);
-        return tree;
+    @ResponseBody
+    public String  departMenu(){
+        try{
+            // 查询出所有的菜单数据集合
+            List<DepartMent> departMenus = rulesBackService.selectTree();
+            // 生成菜单树
+            List<DepartMent> tree = createTree(0, departMenus);
+            JSONObject obj = new JSONObject();
+            obj.put("isSuccess", true);
+            obj.put("code",200);
+            obj.put("data",tree);
+            return obj.toJSONString();
+        }catch (Exception e){
+            JSONObject obj = new JSONObject();
+            obj.put("isSuccess", false);
+            obj.put("code",407);
+            return obj.toJSONString();
+        }
+
     }
 
     /**
@@ -36,8 +51,13 @@ public class RulesBackController {
             List<DepartMent> treeMenu = new ArrayList<>();
             for (DepartMent departMenu : depart) {
                 if (pid == departMenu.getDepartPid()) {
-                    treeMenu.add(departMenu);
-                    departMenu.setChildren(createTree(departMenu.getId(), depart));
+                    if(1 == departMenu.getId()){
+                        treeMenu.add(departMenu);
+                    }else{
+                        treeMenu.add(departMenu);
+                        departMenu.set__child(createTree(departMenu.getId(), depart));
+                    }
+
                 }
             }
             return treeMenu;
@@ -45,11 +65,15 @@ public class RulesBackController {
                 List<DepartMent> treeMenu = new ArrayList<>();
                 Optional<DepartMent> departMentOptional = depart.stream().filter(item -> item.getId().equals(pid)).findFirst();
                 if(departMentOptional.isPresent()){
-                    treeMenu.add(departMentOptional.get());
+                    DepartMent xinfu = new DepartMent();
+                    xinfu.setId(departMentOptional.get().getId());
+                    xinfu.setDepartName(departMentOptional.get().getDepartName());
+                    xinfu.setDepartPid(departMentOptional.get().getDepartPid());
+                    treeMenu.add(xinfu);
                     for (DepartMent departMenu : depart) {
                         if (pid == departMenu.getDepartPid()) {
                             treeMenu.add(departMenu);
-                            departMenu.setChildren(null);
+                            departMenu.set__child(null);
                         }
                     }
                 }
