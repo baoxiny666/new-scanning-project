@@ -13,8 +13,7 @@ import javax.servlet.MultipartConfigElement;
 
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
-    @Value("${vocs.user.fileUpload.rootSavePath}")
-    private String rootSavePath;
+
 
 
 
