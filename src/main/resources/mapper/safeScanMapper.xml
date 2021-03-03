@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tglh.newscanningproject.scanning.mapper.SafeScanMapper">
+    <select id="areaInfo" parameterType="java.lang.String"   resultType="com.tglh.newscanningproject.scanning.entity.ScanArea">
+        select
+            area_name,
+            area_no,
+            depart_id,
+            sd.depart_name,
+            depart_name,
+            manage_phone,
+            manage_user_name,
+            manage_user_no
+        from scan_area sa
+        join sys_department  sd
+        on sa.depart_id = sd.id
+        where area_no = #{code}
+    </select>
+
+    <select id="areaInfoItems" parameterType="java.lang.String"   resultType="com.tglh.newscanningproject.scanning.entity.ScanAreaItems">
+        select
+            area_no areaNo,
+            item_name itemName,
+            checked,
+            id,
+            DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') updateTime,
+            DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') createTime
+        from scan_area_items
+        where area_no = #{code}
+    </select>
+
+    <select id="getMaxId"    resultType="java.util.Map">
+        select
+            max(id) id
+        from scan_records_bxy
+    </select>
+
+   <insert id="addRecord"  parameterType="com.tglh.newscanningproject.scanning.entity.ScanRecordAdvise"  >
+        insert into scan_records_bxy
+            ( area_no,
+             area_name,
+             depart_id,
+             depart_name,
+             manage_user,
+             manage_user_name,
+             manage_phone,
+             `desc`,
+             item_ids,
+             images,
+             record_status,
+             record_user_no,
+             record_user_name,
+             record_user_phone,
+             record_location,
+             create_time,
+             update_time
+             )
+        values
+        (#{areaData.area_no},
+        #{areaData.area_name},
+        #{areaData.depart_id},
+        #{areaData.depart_name},
+        #{areaData.manage_user_no},
+        #{areaData.manage_user_name},
+        #{areaData.manage_phone},
+        #{descData},
+        #{selectItems},
+        #{imgArray},
+        1,
+        #{userInfo.userNo},
+        #{userInfo.userName},
+        #{userInfo.userPhone},
+        #{location.locationTotal},
+        sysdate(),
+        sysdate()
+        )
+    </insert>
+
+
+    <insert id="addRecordAction" parameterType="com.tglh.newscanningproject.scanning.entity.ScanRecordAdvise"  >
+        insert into scan_records_action_bxycwb
+            (    record_id,
+                 action_type,
+                 action_item_ids,
+                 action_user_no,
+                 action_user_name,
+                 action_user_phone,
+                 action_time,
+                 create_time,
+                 update_time
+             )
+        values
+            (
+                #{maxId},
+                1,
+                #{selectItems},
+                #{userInfo.userNo},
+                #{userInfo.userName},
+                #{userInfo.userPhone},
+                sysdate(),
+                sysdate(),
+                sysdate()
+            )
+    </insert>
+
+
+</mapper>
+

@@ -2,6 +2,11 @@ package com.tglh.newscanningproject.scanning.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.tglh.newscanningproject.scanning.entity.PicDetail;
+import com.tglh.newscanningproject.scanning.entity.ScanArea;
+import com.tglh.newscanningproject.scanning.entity.ScanAreaItems;
+import com.tglh.newscanningproject.scanning.entity.ScanRecordAdvise;
+import com.tglh.newscanningproject.scanning.service.SafeScanService;
+import com.tglh.newscanningproject.utils.AesUtil;
 import com.tglh.newscanningproject.utils.FileTypeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -17,10 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.sql.Blob;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Controller
 @RequestMapping("/safeScan")
@@ -28,6 +30,45 @@ public class SafeScanController {
     //获取环境对象
     @Autowired
     private Environment env;
+
+    @Autowired
+    private SafeScanService safeScanService;
+
+    @RequestMapping("/addRecord")
+    @ResponseBody
+    private String addRecord(String  encrypted) {
+        //解密 --- 前端代码传过来的 用户编码 和 密码
+        String encryptedCode = AesUtil.decrypt(encrypted,AesUtil.KEY);
+        JSONObject encryptedCodeObj=JSONObject.parseObject(encryptedCode);
+        ScanRecordAdvise scanRecordAdvise = (ScanRecordAdvise) JSONObject.toJavaObject(encryptedCodeObj, ScanRecordAdvise.class);  //通过JSONObject.toBean()方法进行对象间的转换
+        Map maxIdMap = safeScanService.getMaxId();
+        scanRecordAdvise.setMaxId(maxIdMap.get("id").toString());
+        safeScanService.addRecord(scanRecordAdvise);
+        safeScanService.addRecordAction(scanRecordAdvise);
+        JSONObject obj = new JSONObject();
+        Map map = new HashMap();
+
+        obj.put("code",200);
+        obj.put("message","成功");
+        obj.put("data",map);
+        return obj.toJSONString();
+    }
+
+
+    @RequestMapping("/areaInfo")
+    @ResponseBody
+    private String areaInfo(String code) {
+        ScanArea scanArea = safeScanService.areaInfo(code);
+        List<ScanAreaItems> scanAreaItemsList = safeScanService.areaInfoItems(code);
+        JSONObject obj = new JSONObject();
+        Map map = new HashMap();
+        map.put("areaInfo",scanArea);
+        map.put("areaItems",scanAreaItemsList);
+        obj.put("code",200);
+        obj.put("message","成功");
+        obj.put("data",map);
+        return obj.toJSONString();
+    }
 
     @RequestMapping("/uploadImg")
     @ResponseBody
@@ -83,7 +124,9 @@ public class SafeScanController {
                 }
             }
         } catch (Exception e){
-            e.printStackTrace();
+            JSONObject obj = new JSONObject();
+            obj.put("code",407);
+            return obj.toJSONString();
         } finally {
             if (bos != null) {
                 try {
@@ -100,59 +143,37 @@ public class SafeScanController {
                 }
             }
         }
+        return "";
+    }
 
 
 
-
-     /*   //定义输出流
-        FileOutputStream fileOutputStream = null;
-        //项目上传图片路径
-        String picDetailUrl = picDetail.getFilePath();
-        File transferFile = new File(picDetailUrl);
-
-        String fileExtendsName = FileTypeUtils.getFileTypeByFile(transferFile);
-        //将blob流转换为 byte 进行存储在目录机构里面
-        byte[] bytes = null;
+    @RequestMapping("/delImg")
+    @ResponseBody
+    private String delImg(String imgUrl) {
+        JSONObject jsonObject = new JSONObject();
         try {
-            FileInputStream fis = new FileInputStream(picDetailUrl);
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            byte[] b = new byte[1024];
-            int n;
-            while ((n = fis.read(b)) != -1){
-                bos.write(b, 0, n);
-            }
-            fis.close();
-            bos.close();
-            bytes =  bos.toByteArray();
-            //bytes转换为真正的文件夹目录
-            //设置目录结构
-            //获取当前日期
-            Date date = new Date();
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            String dateCategory = formatter.format(date);
-            String uuidSign = System.currentTimeMillis()+ UUID.randomUUID().toString();
             String propertyfileUpload = env.getProperty("vocs.fileUpload.rootSavePath");
-
-            String filePath = propertyfileUpload +"/"+ dateCategory +"/";
-
-
-            File pointDir = new File(filePath);
-            if(!pointDir.exists()&&pointDir.isDirectory()){//判断文件目录是否存在
-                pointDir.mkdirs();
+            //用作返回的目录结
+            String filePath = propertyfileUpload + "/" + imgUrl + "/";
+            File deleteDir = new File(filePath);
+            // 判断文件是否存在
+            boolean flag = false;
+            flag = deleteDir.exists();
+            if (flag == true) {
+                boolean deleteFlag = deleteDir.delete();
+                if (deleteFlag == true) {
+                    jsonObject.put("code",200);
+                    jsonObject.put("message","成功删除了");
+                    return jsonObject.toJSONString();
+                }
             }
-
-            fileOutputStream = new FileOutputStream(filePath+uuidSign+fileExtendsName);
-            fileOutputStream.write(bytes);
-            fileOutputStream.flush();
-
-            JSONObject obj = new JSONObject();
-            obj.put("code",200);
-            obj.put("url","");
-
-        } catch(Exception ex){
-            ex.printStackTrace();
+        }catch (Exception e){
+            jsonObject.put("code",407);
+            jsonObject.put("message","删除未成功");
+            return jsonObject.toJSONString();
         }
-*/
+
         return "";
     }
 }
