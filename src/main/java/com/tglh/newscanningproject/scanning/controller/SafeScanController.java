@@ -34,6 +34,17 @@ public class SafeScanController {
     @Autowired
     private SafeScanService safeScanService;
 
+    @RequestMapping("/areaFilter")
+    @ResponseBody
+    private String areaFilter() {
+        List<ScanArea> list = safeScanService.areaFilter();
+        JSONObject obj = new JSONObject();
+        obj.put("code",200);
+        obj.put("message","成功");
+        obj.put("data",list);
+        return obj.toJSONString();
+    }
+
     @RequestMapping("/addRecord")
     @ResponseBody
     private String addRecord(String  encrypted) {

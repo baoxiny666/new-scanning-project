@@ -1,14 +1,12 @@
 package com.tglh.newscanningproject.scanning.service.impl;
 
-import com.tglh.newscanningproject.scanning.entity.DepartMent;
-import com.tglh.newscanningproject.scanning.entity.ScanArea;
-import com.tglh.newscanningproject.scanning.entity.ScanAreaItems;
-import com.tglh.newscanningproject.scanning.entity.ScanRecordAdvise;
+import com.tglh.newscanningproject.scanning.entity.*;
 import com.tglh.newscanningproject.scanning.mapper.SafeScanMapper;
 import com.tglh.newscanningproject.scanning.service.SafeScanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -37,13 +35,34 @@ public class SafeScanServiceImpl implements SafeScanService {
 
     @Override
     public Map getMaxId() {
-        Map maxId = safeScanMapper.getMaxId();
-        return maxId;
+        Map maxIdMap = safeScanMapper.getMaxId();
+        return maxIdMap;
     }
 
     @Override
     public List<ScanAreaItems> areaInfoItems(String code) {
         List<ScanAreaItems> list =  safeScanMapper.areaInfoItems(code);
         return list;
+    }
+
+    @Override
+    public List<ScanArea> areaFilter() {
+        List<ScanArea> areaAll =   safeScanMapper.selectAreaFilter();
+        List<ScanArea> list = new ArrayList();
+        list = createTree(0,areaAll);
+        return list;
+
+    }
+
+
+    private List<ScanArea> createTree(int pid, List<ScanArea> areaAll) {
+        List<ScanArea> area = new ArrayList<>();
+        for (ScanArea menu : areaAll) {
+            if (pid == menu.getPid()) {
+                area.add(menu);
+                menu.setChildren(createTree(menu.getValue(), areaAll));
+            }
+        }
+        return area;
     }
 }

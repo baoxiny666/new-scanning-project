@@ -104,6 +104,29 @@
             )
     </insert>
 
+    <select id="selectAreaFilter"   resultType="com.tglh.newscanningproject.scanning.entity.ScanArea">
+          select
+                distinct(sd.id) `value`,
+                sd.depart_name label,
+                0 as pid
+          from scan_area sa
+          left join sys_department  sd
+          on sa.depart_id = sd.id
+          union  all
+          select (@i:=@i+1) as `value`,
+				aaa.label,
+				aaa.pid
+          from (
+                     select
+                            sa.area_name label,
+                            sa.depart_id pid
+                     from scan_area sa
+                     left join sys_department  sd
+                     on sa.depart_id = sd.id
+            ) aaa,(select @i:=99999) as it
+    </select>
+
+
 
 </mapper>
 

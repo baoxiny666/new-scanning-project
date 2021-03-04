@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tglh.newscanningproject.scanning.mapper.HomeMapper">
+    <select id="modules"    resultType="com.tglh.newscanningproject.scanning.entity.SafeModules">
+        select
+            id,
+            module_no moduleNo,
+            module_name moduleName,
+            module_desc moduleDesc,
+            module_icon moduleIcon,
+            module_bg moduleBg,
+            module_router moduleRouter,
+            is_permit isPermit,
+            module_status moduleStatus,
+            show_order showOrder,
+            DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') createTime,
+            DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') updateTime
+        from sys_modules
+    </select>
+
+    <select id="banner"    resultType="com.tglh.newscanningproject.scanning.entity.Banner">
+        select
+            id,
+            ad_group adGroup,
+            ad_image adImage,
+            DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') createTime,
+            DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') updateTime
+        from sys_ad
+    </select>
+
+    <select id="notice"    resultType="com.tglh.newscanningproject.scanning.entity.Notice">
+        select
+            id,
+            notice_content noticeContent,
+            notice_status noticeStatus
+        from sys_notice
+    </select>
+</mapper>
+

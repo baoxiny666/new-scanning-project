@@ -26,7 +26,13 @@ public class Location {
     }
 
     public String getLocationTotal() {
-        return this.longitude + "," +this.latitude;
+        if(this.latitude == null || this.longitude == null){
+            return "";
+        }else{
+            return this.longitude + "," +this.latitude;
+
+        }
+
     }
 
 
