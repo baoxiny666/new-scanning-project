@@ -43,8 +43,8 @@ public class MyUploadList {
     private User userInfo;
     private ClientInfo clientInfo;
 
-    private String buMenId;
-    private String quYuId;
+    private Integer buMenId;
+    private Integer quYuId;
 
 
 

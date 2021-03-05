@@ -161,7 +161,7 @@
             select
                 srds.id,
                 srds.area_no areaNo,
-                sa.id + 100000 areaId,
+                (sa.id + 100000) areaId,
                 srds.area_name areaName,
                 srds.depart_id departId,
                 srds.depart_name departName,

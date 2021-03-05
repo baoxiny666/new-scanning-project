@@ -40,8 +40,8 @@ public class SafeScanController {
         System.out.println(encryptedCodeObj);
         MyUploadList myUploadList = (MyUploadList) JSONObject.toJavaObject(encryptedCodeObj, MyUploadList.class);  //通过JSONObject.toBean()方法进行对象间的转换
         if(myUploadList.getAreaSelect().size() > 0){
-            myUploadList.setBuMenId(myUploadList.getAreaSelect().get(0).toString());
-            myUploadList.setQuYuId(myUploadList.getAreaSelect().get(1).toString());
+            myUploadList.setBuMenId(Integer.valueOf(myUploadList.getAreaSelect().get(0).toString()));
+            myUploadList.setQuYuId(Integer.valueOf(myUploadList.getAreaSelect().get(1).toString()));
         }
         Integer page = myUploadList.getPageNum();
         Integer rows = myUploadList.getPageSize();
