@@ -1,11 +1,9 @@
 package com.tglh.newscanningproject.scanning.mapper;
 
-import com.tglh.newscanningproject.scanning.entity.DepartMent;
-import com.tglh.newscanningproject.scanning.entity.ScanArea;
-import com.tglh.newscanningproject.scanning.entity.ScanAreaItems;
-import com.tglh.newscanningproject.scanning.entity.ScanRecordAdvise;
+import com.tglh.newscanningproject.scanning.entity.*;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,9 +20,16 @@ public interface SafeScanMapper {
     //获取最大ID
     public Map getMaxId();
 
-    //获取最大ID
+    //获取区域信息
     public List<ScanArea> selectAreaFilter();
-    public List<ScanArea>  selectCategoryArea();
+
+    public String selectStatusFilter();
+
+    //查询列表总条数
+    public HashMap selectTotal(MyUploadList myUploadList);
+    //查新列表内容
+    public List  myList(MyUploadList myUploadList);
+
 
 
 }

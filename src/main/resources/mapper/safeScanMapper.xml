@@ -105,28 +105,142 @@
     </insert>
 
     <select id="selectAreaFilter"   resultType="com.tglh.newscanningproject.scanning.entity.ScanArea">
-          select
-                distinct(sd.id) `value`,
-                sd.depart_name label,
-                0 as pid
-          from scan_area sa
-          left join sys_department  sd
-          on sa.depart_id = sd.id
+              select
+                    distinct(sd.id) `value`,
+                    sd.depart_name label,
+                    0 as pid
+              from scan_area sa
+              left join sys_department  sd
+              on sa.depart_id = sd.id
           union  all
-          select (@i:=@i+1) as `value`,
-				aaa.label,
-				aaa.pid
-          from (
-                     select
+              select
+                            sa.id+100000  `value`,
                             sa.area_name label,
                             sa.depart_id pid
-                     from scan_area sa
-                     left join sys_department  sd
-                     on sa.depart_id = sd.id
-            ) aaa,(select @i:=99999) as it
+              from scan_area sa
+              left join sys_department sd
+              on sa.depart_id = sd.id
+    </select>
+
+    <select id="selectStatusFilter" resultType="java.lang.String">
+        select scan_value from scan_configs where scan_key = 'record_status'
     </select>
 
 
+    <select id="selectTotal" parameterType="com.tglh.newscanningproject.scanning.entity.MyUploadList" resultType="java.util.HashMap">
+        select count(1) count
+        from scan_records srds
+        left join scan_area sa
+        on srds.area_no = sa.area_no
+        where 1 = 1
+        <if test="searchKey != null and searchKey !=''">
+            and srds.depart_name like '%'  #{searchKey}  '%'
+        </if>
+        <if test="statusSelect != null and statusSelect !=''">
+            and srds.record_status = #{statusSelect}
+        </if>
+        <if test="buMenId != null and buMenId !=''">
+            and srds.depart_id = #{buMenId}
+        </if>
+        <if test="quYuId != null and quYuId !=''">
+            and sa.id+100000 = #{quYuId}
+        </if>
+        <if test="dateSelect != null and dateSelect !=''">
+            and  DATE_FORMAT(srds.create_time,'%Y-%m-%d') = #{dateSelect}
+        </if>
+        <if test="userInfo != null and userInfo.userNo !=null">
+            and  srds.record_user_no = #{userInfo.userNo}
+        </if>
+        <!--<if test="clientInfo != null and clientInfo !=''">
+            and  myUpload.appClientId = #{clientInfo.clientid}
+        </if>-->
+     </select>
 
+    <select id="myList" parameterType="com.tglh.newscanningproject.scanning.entity.MyUploadList" resultType="com.tglh.newscanningproject.scanning.entity.MyUploadList">
+        with myUpload as (
+            select
+                srds.id,
+                srds.area_no areaNo,
+                sa.id + 100000 areaId,
+                srds.area_name areaName,
+                srds.depart_id departId,
+                srds.depart_name departName,
+                srds.manage_user manageUser,
+                srds.manage_user_name manageUserName,
+                srds.manage_phone managePhone,
+                srds.`desc`,
+                srds.item_ids itemIds,
+                srds.images,
+                srds.record_status recordStatus,
+                case srds.record_status
+                    when 0 then '未通过'
+                    when 1 then '新增'
+                    when 2 then '已审核'
+                    when 3 then '已处理'
+                    when 4 then '已归档'
+                end as 'recordStatusName',
+                srds.record_user_no recordUserNo,
+                srds.record_user_phone recordUserPhone,
+                srds.record_location recordLocation,
+                srds.record_location_name recordLocationName,
+                srds.app_client_id appClientId,
+                DATE_FORMAT(srds.update_time,'%Y-%m-%d %H:%i:%s') updateTime,
+                DATE_FORMAT(srds.create_time,'%Y-%m-%d %H:%i:%s') createTime
+            from  scan_records srds
+            left join scan_area sa
+            on srds.area_no = sa.area_no
+        )
+        select * from (
+                        select
+                                (@r:=@r + 1) AS _row_number,
+                                id,
+                                areaNo,
+                                areaId,
+                                areaName,
+                                departId,
+                                departName,
+                                manageUser,
+                                manageUserName,
+                                managePhone,
+                                `desc`,
+                                itemIds,
+                                images,
+                                recordStatus,
+                                recordStatusName,
+                                recordUserNo,
+                                recordUserPhone,
+                                recordLocation,
+                                recordLocationName,
+                                appClientId,
+                                updateTime,
+                                createTime
+        from myUpload,(select @r := 0) r
+        where 1 = 1
+        <if test="searchKey != null and searchKey !=''">
+            and departName like '%'  #{searchKey}  '%'
+        </if>
+        <if test="statusSelect != null and statusSelect !=''">
+            and recordStatus = #{statusSelect}
+        </if>
+        <if test="buMenId != null and buMenId !=''">
+            and departId = #{buMenId}
+        </if>
+        <if test="quYuId != null and quYuId !=''">
+            and areaId = #{quYuId}
+        </if>
+        <if test="dateSelect != null and dateSelect !=''">
+            and  DATE_FORMAT(createTime,'%Y-%m-%d') = #{dateSelect}
+        </if>
+        <if test="userInfo != null and userInfo.userNo !=null">
+            and  recordUserNo = #{userInfo.userNo}
+        </if>
+        <!--<if test="clientInfo != null and clientInfo !=''">
+            and  myUpload.appClientId = #{clientInfo.clientid}
+        </if>-->
+            order by myUpload.createTime desc
+        ) T
+        where <![CDATA[ T._row_number > #{startPageNum}
+                        AND T._row_number <= #{endPageNum} ]]>
+        </select>
 </mapper>
 

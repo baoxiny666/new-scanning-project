@@ -1,10 +1,7 @@
 package com.tglh.newscanningproject.scanning.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.tglh.newscanningproject.scanning.entity.PicDetail;
-import com.tglh.newscanningproject.scanning.entity.ScanArea;
-import com.tglh.newscanningproject.scanning.entity.ScanAreaItems;
-import com.tglh.newscanningproject.scanning.entity.ScanRecordAdvise;
+import com.tglh.newscanningproject.scanning.entity.*;
 import com.tglh.newscanningproject.scanning.service.SafeScanService;
 import com.tglh.newscanningproject.utils.AesUtil;
 import com.tglh.newscanningproject.utils.FileTypeUtils;
@@ -33,6 +30,47 @@ public class SafeScanController {
 
     @Autowired
     private SafeScanService safeScanService;
+
+
+    @RequestMapping("/myList")
+    @ResponseBody
+    private String myList(String  encrypted) {
+        String encryptedCode = AesUtil.decrypt(encrypted,AesUtil.KEY);
+        JSONObject encryptedCodeObj=JSONObject.parseObject(encryptedCode);
+        System.out.println(encryptedCodeObj);
+        MyUploadList myUploadList = (MyUploadList) JSONObject.toJavaObject(encryptedCodeObj, MyUploadList.class);  //通过JSONObject.toBean()方法进行对象间的转换
+        if(myUploadList.getAreaSelect().size() > 0){
+            myUploadList.setBuMenId(myUploadList.getAreaSelect().get(0).toString());
+            myUploadList.setQuYuId(myUploadList.getAreaSelect().get(1).toString());
+        }
+        Integer page = myUploadList.getPageNum();
+        Integer rows = myUploadList.getPageSize();
+        myUploadList.setStartPageNum((page-1)*rows);
+        myUploadList.setEndPageNum((page*rows));
+        Long total = safeScanService.selectTotal(myUploadList);
+
+        List list = safeScanService.myList(myUploadList);
+        JSONObject obj = new JSONObject();
+        HashMap m = new HashMap();
+        m.put("totalCount",total);
+        m.put("pageSize",rows);
+        m.put("list",list);
+        obj.put("code",200);
+        obj.put("message","成功");
+        obj.put("data",m);
+        return obj.toJSONString();
+    }
+
+    @RequestMapping("/statusFilter")
+    @ResponseBody
+    private String statusFilter() {
+            List list = safeScanService.statusFilter();
+            JSONObject obj = new JSONObject();
+            obj.put("code",200);
+            obj.put("message","成功");
+            obj.put("data",list);
+            return obj.toJSONString();
+    }
 
     @RequestMapping("/areaFilter")
     @ResponseBody

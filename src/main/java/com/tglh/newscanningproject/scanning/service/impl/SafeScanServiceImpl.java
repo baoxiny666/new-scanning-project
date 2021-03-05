@@ -1,12 +1,16 @@
 package com.tglh.newscanningproject.scanning.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.tglh.newscanningproject.scanning.entity.*;
 import com.tglh.newscanningproject.scanning.mapper.SafeScanMapper;
 import com.tglh.newscanningproject.scanning.service.SafeScanService;
+import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,6 +56,33 @@ public class SafeScanServiceImpl implements SafeScanService {
         list = createTree(0,areaAll);
         return list;
 
+    }
+
+    @Override
+    public List statusFilter() {
+        String statusFilterString = safeScanMapper.selectStatusFilter();
+        JSONArray jsonArray = JSONArray.fromObject(statusFilterString);
+        JSONArray ja = new JSONArray();
+        for(int z =0;z<jsonArray.size();z++){
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("label",jsonArray.get(z));
+            jsonObject.put("value",z);
+            ja.add(jsonObject);
+        }
+        return ja;
+    }
+
+    @Override
+    public List<MyUploadList> myList(MyUploadList myUploadList) {
+        List<MyUploadList> statusFilterString = safeScanMapper.myList(myUploadList);
+        return statusFilterString;
+    }
+
+    @Override
+    public Long selectTotal(MyUploadList myUploadList) {
+        HashMap selectTotalMap = safeScanMapper.selectTotal(myUploadList);
+        long total = Long.valueOf(selectTotalMap.get("count").toString());
+        return total;
     }
 
 

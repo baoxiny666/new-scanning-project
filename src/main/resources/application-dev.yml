@@ -38,6 +38,4 @@ vocs:
 #showSql
 logging:
   level:
-    com:
-      example:
-        mapper : debug
+    com.tglh.newscanningproject.scanning.mapper : debug
