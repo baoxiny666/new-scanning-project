@@ -73,6 +73,24 @@ public class SafeScanServiceImpl implements SafeScanService {
     }
 
     @Override
+    public List<MyChargeList> myChargeList(MyChargeList myChargeList) {
+        //safeScanMapper.myChargeList();
+        return null;
+    }
+
+    @Override
+    public Long selectChargeTotal(MyChargeList myChargeList) {
+        //safeScanMapper.selectChargeTotal();
+        return null;
+    }
+
+    @Override
+    public Integer selectListPageSize() {
+        String listPageSize = safeScanMapper.selectListPageSize();
+        return Integer.valueOf(listPageSize);
+    }
+
+    @Override
     public List<MyUploadList> myList(MyUploadList myUploadList) {
         List<MyUploadList> statusFilterString = safeScanMapper.myList(myUploadList);
         return statusFilterString;

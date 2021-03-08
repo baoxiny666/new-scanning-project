@@ -22,13 +22,15 @@ public interface SafeScanMapper {
 
     //获取区域信息
     public List<ScanArea> selectAreaFilter();
-
+    //获取状态选项
     public String selectStatusFilter();
-
+    //获取每页显示的条数
+    public String selectListPageSize();
     //查询列表总条数
     public HashMap selectTotal(MyUploadList myUploadList);
     //查新列表内容
     public List  myList(MyUploadList myUploadList);
+
 
 
 

@@ -20,5 +20,38 @@
         where user_no= #{userNo}
         and user_pwd= #{userPwd}
     </select>
+
+    <select id="selectTree"    resultType="com.tglh.newscanningproject.scanning.entity.DepartMent">
+        select
+            id,
+            depart_name departName,
+            depart_pid departPid
+        from sys_department
+    </select>
+
+    <insert id="regist" parameterType="com.tglh.newscanningproject.scanning.entity.User">
+        insert into sys_users_bxycwb(
+                                user_no,
+                                user_name,
+                                user_pwd,
+                                depart_id,
+                                user_phone,
+                                post_id,
+                                create_time,
+                                update_time,
+                                user_status
+        ) values (
+            #{userNo},
+            #{userName},
+            #{userPwd},
+            #{departId},
+            #{userPhone},
+            #{postId},
+             sysdate(),
+             sysdate(),
+             0
+        )
+    </insert>
+
 </mapper>
 

@@ -126,6 +126,9 @@
         select scan_value from scan_configs where scan_key = 'record_status'
     </select>
 
+    <select id="selectListPageSize" resultType="java.lang.String">
+        select scan_value from scan_configs where scan_key = 'list_page_size'
+    </select>
 
     <select id="selectTotal" parameterType="com.tglh.newscanningproject.scanning.entity.MyUploadList" resultType="java.util.HashMap">
         select count(1) count
@@ -151,6 +154,7 @@
         <if test="userInfo != null and userInfo.userNo !=null">
             and  srds.record_user_no = #{userInfo.userNo}
         </if>
+
         <!--<if test="clientInfo != null and clientInfo !=''">
             and  myUpload.appClientId = #{clientInfo.clientid}
         </if>-->

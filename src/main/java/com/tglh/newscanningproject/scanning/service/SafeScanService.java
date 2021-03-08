@@ -18,7 +18,15 @@ public interface SafeScanService {
 
      List<ScanArea> areaFilter();
 
+     Integer selectListPageSize();
+
      List statusFilter();
+
+
+
+     List<MyChargeList> myChargeList(MyChargeList myChargeList);
+
+     Long selectChargeTotal(MyChargeList myChargeList);
 
      List<MyUploadList> myList(MyUploadList myUploadList);
 

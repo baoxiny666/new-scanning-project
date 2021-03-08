@@ -32,6 +32,8 @@ public class SafeScanController {
     private SafeScanService safeScanService;
 
 
+
+
     @RequestMapping("/myList")
     @ResponseBody
     private String myList(String  encrypted) {
@@ -43,12 +45,13 @@ public class SafeScanController {
             myUploadList.setBuMenId(Integer.valueOf(myUploadList.getAreaSelect().get(0).toString()));
             myUploadList.setQuYuId(Integer.valueOf(myUploadList.getAreaSelect().get(1).toString()));
         }
+        //获得每页显示的条数
+        Integer rows = safeScanService.selectListPageSize();
         Integer page = myUploadList.getPageNum();
-        Integer rows = myUploadList.getPageSize();
+        //Integer rows = myUploadList.getPageSize();
         myUploadList.setStartPageNum((page-1)*rows);
         myUploadList.setEndPageNum((page*rows));
         Long total = safeScanService.selectTotal(myUploadList);
-
         List list = safeScanService.myList(myUploadList);
         JSONObject obj = new JSONObject();
         HashMap m = new HashMap();
@@ -60,6 +63,38 @@ public class SafeScanController {
         obj.put("data",m);
         return obj.toJSONString();
     }
+
+    //我负责的列表配置
+    @RequestMapping("/myCharge")
+    @ResponseBody
+    private String myCharge(String  encrypted) {
+        String encryptedCode = AesUtil.decrypt(encrypted,AesUtil.KEY);
+        JSONObject encryptedCodeObj=JSONObject.parseObject(encryptedCode);
+        System.out.println(encryptedCodeObj);
+        MyChargeList myChargeList = (MyChargeList) JSONObject.toJavaObject(encryptedCodeObj, MyChargeList.class);  //通过JSONObject.toBean()方法进行对象间的转换
+        if(myChargeList.getAreaSelect().size() > 0){
+            myChargeList.setBuMenId(Integer.valueOf(myChargeList.getAreaSelect().get(0).toString()));
+            myChargeList.setQuYuId(Integer.valueOf(myChargeList.getAreaSelect().get(1).toString()));
+        }
+        //获得每页显示的条数
+        Integer rows = safeScanService.selectListPageSize();
+        Integer page = myChargeList.getPageNum();
+        //Integer rows = myUploadList.getPageSize();
+        myChargeList.setStartPageNum((page-1)*rows);
+        myChargeList.setEndPageNum((page*rows));
+        Long total = safeScanService.selectChargeTotal(myChargeList);
+        List list = safeScanService.myChargeList(myChargeList);
+        JSONObject obj = new JSONObject();
+        HashMap m = new HashMap();
+        m.put("totalCount",total);
+        m.put("pageSize",rows);
+        m.put("list",list);
+        obj.put("code",200);
+        obj.put("message","成功");
+        obj.put("data",m);
+        return obj.toJSONString();
+    }
+
 
     @RequestMapping("/statusFilter")
     @ResponseBody
