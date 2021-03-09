@@ -16,7 +16,7 @@
             DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') updateTime,
             DATE_FORMAT(login_time,'%Y-%m-%d %H:%i:%s') loginTime,
             user_status userStatus
-        from sys_users_bxycwb
+        from sys_users
         where user_no= #{userNo}
         and user_pwd= #{userPwd}
     </select>
@@ -29,7 +29,7 @@
         from sys_department
     </select>
     <insert id="insertPost" parameterType="com.tglh.newscanningproject.scanning.entity.User" useGeneratedKeys="true" keyProperty="id"  keyColumn="id">
-        insert into sys_post_bxycwb(depart_id,post_name,post_level,create_time) values (
+        insert into sys_post(depart_id,post_name,post_level,create_time) values (
             #{departId},
             #{userPost},
             1,
@@ -37,7 +37,7 @@
         )
     </insert>
     <insert id="regist" parameterType="com.tglh.newscanningproject.scanning.entity.User">
-        insert into sys_users_bxycwb(
+        insert into sys_users(
                                 user_no,
                                 user_name,
                                 user_pwd,

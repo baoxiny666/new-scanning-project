@@ -52,6 +52,7 @@ public class MyChargeController {
         }else{
             //安全区域讲解
             if("area_safe".equals(scanPermission.getRoleNo())){
+                myChargeList.setAreaNo(scanPermission.getAreaNo());
                 Long total = myChargeService.selectChargeAreaTotal(myChargeList);
                 List list = myChargeService.myChargeAreaList(myChargeList);
                 JSONObject obj = new JSONObject();
@@ -64,6 +65,7 @@ public class MyChargeController {
                 obj.put("data",m);
                 return obj.toJSONString();
             }else if("depart_safe".equals(scanPermission.getRoleNo())){
+                myChargeList.setDepartId(scanPermission.getDepartId());
                 Long total = myChargeService.selectChargeDepartTotal(myChargeList);
                 List list = myChargeService.myChargeDepartList(myChargeList);
                 JSONObject obj = new JSONObject();

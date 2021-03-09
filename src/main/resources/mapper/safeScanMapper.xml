@@ -33,11 +33,11 @@
     <select id="getMaxId"    resultType="java.util.Map">
         select
             max(id) id
-        from scan_records_bxy
+        from scan_records
     </select>
 
    <insert id="addRecord"  parameterType="com.tglh.newscanningproject.scanning.entity.ScanRecordAdvise"  >
-        insert into scan_records_bxy
+        insert into scan_records
             ( area_no,
              area_name,
              depart_id,
@@ -79,7 +79,7 @@
 
 
     <insert id="addRecordAction" parameterType="com.tglh.newscanningproject.scanning.entity.ScanRecordAdvise"  >
-        insert into scan_records_action_bxycwb
+        insert into scan_records_action
             (    record_id,
                  action_type,
                  action_item_ids,
@@ -139,7 +139,7 @@
         <if test="searchKey != null and searchKey !=''">
             and srds.depart_name like '%'  #{searchKey}  '%'
         </if>
-        <if test="statusSelect != null and statusSelect !=''">
+        <if test="statusSelect != null">
             and srds.record_status = #{statusSelect}
         </if>
         <if test="buMenId != null and buMenId !=''">
@@ -223,7 +223,7 @@
         <if test="searchKey != null and searchKey !=''">
             and departName like '%'  #{searchKey}  '%'
         </if>
-        <if test="statusSelect != null and statusSelect !=''">
+        <if test="statusSelect != null">
             and recordStatus = #{statusSelect}
         </if>
         <if test="buMenId != null and buMenId !=''">

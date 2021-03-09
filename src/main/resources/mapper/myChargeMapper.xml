@@ -11,19 +11,21 @@
             area_no areaNo,
             create_time createTime,
             update_time updateTime
-        from scan_permission user_no = #{userInfo.userNo}
+        from scan_permission where user_no = #{userInfo.userNo}
     </select>
-
+    <select id="selectListPageSize" resultType="java.lang.String">
+        select scan_value from scan_configs where scan_key = 'list_page_size'
+    </select>
     <select id="selectChargeAreaTotal" parameterType="com.tglh.newscanningproject.scanning.entity.MyChargeList" resultType="java.util.HashMap">
         select count(1) count
         from scan_records srds
         left join scan_area sa
         on srds.area_no = sa.area_no
-        where 1 = 1 and  areaNo = #{areaNo}
+        where 1 = 1 and  srds.area_no = #{areaNo}
         <if test="searchKey != null and searchKey !=''">
             and srds.depart_name like '%'  #{searchKey}  '%'
         </if>
-        <if test="statusSelect != null and statusSelect !=''">
+        <if test="statusSelect != null">
             and srds.record_status = #{statusSelect}
         </if>
         <if test="buMenId != null and buMenId !=''">
@@ -104,7 +106,7 @@
                         <if test="searchKey != null and searchKey !=''">
                             and departName like '%'  #{searchKey}  '%'
                         </if>
-                        <if test="statusSelect != null and statusSelect !=''">
+                        <if test="statusSelect != null">
                             and recordStatus = #{statusSelect}
                         </if>
                         <if test="buMenId != null and buMenId !=''">
@@ -190,7 +192,7 @@
         <if test="searchKey != null and searchKey !=''">
             and departName like '%'  #{searchKey}  '%'
         </if>
-        <if test="statusSelect != null and statusSelect !=''">
+        <if test="statusSelect != null">
             and recordStatus = #{statusSelect}
         </if>
         <if test="buMenId != null and buMenId !=''">
@@ -217,11 +219,11 @@
         from scan_records srds
         left join scan_area sa
         on srds.area_no = sa.area_no
-        where 1 = 1 and  departId = #{departId}
+        where 1 = 1 and  srds.depart_id = #{departId}
         <if test="searchKey != null and searchKey !=''">
             and srds.depart_name like '%'  #{searchKey}  '%'
         </if>
-        <if test="statusSelect != null and statusSelect !=''">
+        <if test="statusSelect != null">
             and srds.record_status = #{statusSelect}
         </if>
         <if test="buMenId != null and buMenId !=''">
@@ -247,7 +249,7 @@
         <if test="searchKey != null and searchKey !=''">
             and srds.depart_name like '%'  #{searchKey}  '%'
         </if>
-        <if test="statusSelect != null and statusSelect !=''">
+        <if test="statusSelect != null">
             and srds.record_status = #{statusSelect}
         </if>
         <if test="buMenId != null and buMenId !=''">
@@ -328,7 +330,7 @@
         <if test="searchKey != null and searchKey !=''">
             and departName like '%'  #{searchKey}  '%'
         </if>
-        <if test="statusSelect != null and statusSelect !=''">
+        <if test="statusSelect != null">
             and recordStatus = #{statusSelect}
         </if>
         <if test="buMenId != null and buMenId !=''">

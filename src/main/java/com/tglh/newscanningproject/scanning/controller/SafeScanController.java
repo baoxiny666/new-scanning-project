@@ -64,36 +64,6 @@ public class SafeScanController {
         return obj.toJSONString();
     }
 
-    //我负责的列表配置
-    @RequestMapping("/myCharge")
-    @ResponseBody
-    private String myCharge(String  encrypted) {
-        String encryptedCode = AesUtil.decrypt(encrypted,AesUtil.KEY);
-        JSONObject encryptedCodeObj=JSONObject.parseObject(encryptedCode);
-        System.out.println(encryptedCodeObj);
-        MyChargeList myChargeList = (MyChargeList) JSONObject.toJavaObject(encryptedCodeObj, MyChargeList.class);  //通过JSONObject.toBean()方法进行对象间的转换
-        if(myChargeList.getAreaSelect().size() > 0){
-            myChargeList.setBuMenId(Integer.valueOf(myChargeList.getAreaSelect().get(0).toString()));
-            myChargeList.setQuYuId(Integer.valueOf(myChargeList.getAreaSelect().get(1).toString()));
-        }
-        //获得每页显示的条数
-        Integer rows = safeScanService.selectListPageSize();
-        Integer page = myChargeList.getPageNum();
-        //Integer rows = myUploadList.getPageSize();
-        myChargeList.setStartPageNum((page-1)*rows);
-        myChargeList.setEndPageNum((page*rows));
-        Long total = safeScanService.selectChargeTotal(myChargeList);
-        List list = safeScanService.myChargeList(myChargeList);
-        JSONObject obj = new JSONObject();
-        HashMap m = new HashMap();
-        m.put("totalCount",total);
-        m.put("pageSize",rows);
-        m.put("list",list);
-        obj.put("code",200);
-        obj.put("message","成功");
-        obj.put("data",m);
-        return obj.toJSONString();
-    }
 
 
     @RequestMapping("/statusFilter")
