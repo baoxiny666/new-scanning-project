@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tglh.newscanningproject.scanning.mapper.MyChargeMapper">
+    <select id="selectCurrentPermission" parameterType="com.tglh.newscanningproject.scanning.entity.MyChargeList"    resultType="com.tglh.newscanningproject.scanning.entity.ScanPermission">
+        select
+            id,
+            user_no userNo,
+            role_no roleNo,
+            depart_id  departId,
+            area_no areaNo,
+            create_time createTime,
+            update_time updateTime
+        from scan_permission user_no = #{userInfo.userNo}
+    </select>
+
+    <select id="selectChargeAreaTotal" parameterType="com.tglh.newscanningproject.scanning.entity.MyChargeList" resultType="java.util.HashMap">
+        select count(1) count
+        from scan_records srds
+        left join scan_area sa
+        on srds.area_no = sa.area_no
+        where 1 = 1 and  areaNo = #{areaNo}
+        <if test="searchKey != null and searchKey !=''">
+            and srds.depart_name like '%'  #{searchKey}  '%'
+        </if>
+        <if test="statusSelect != null and statusSelect !=''">
+            and srds.record_status = #{statusSelect}
+        </if>
+        <if test="buMenId != null and buMenId !=''">
+            and srds.depart_id = #{buMenId}
+        </if>
+        <if test="quYuId != null and quYuId !=''">
+            and sa.id+100000 = #{quYuId}
+        </if>
+        <if test="dateSelect != null and dateSelect !=''">
+            and  DATE_FORMAT(srds.create_time,'%Y-%m-%d') = #{dateSelect}
+        </if>
+
+        <!--<if test="clientInfo != null and clientInfo !=''">
+            and  myUpload.appClientId = #{clientInfo.clientid}
+        </if>-->
+    </select>
+
+    <select id="myChargeAreaList" parameterType="com.tglh.newscanningproject.scanning.entity.MyChargeList" resultType="com.tglh.newscanningproject.scanning.entity.MyChargeList">
+        with myCharge as (
+            select
+                srds.id,
+                srds.area_no areaNo,
+                (sa.id + 100000) areaId,
+                srds.area_name areaName,
+                srds.depart_id departId,
+                srds.depart_name departName,
+                srds.manage_user manageUser,
+                srds.manage_user_name manageUserName,
+                srds.manage_phone managePhone,
+                srds.`desc`,
+                srds.item_ids itemIds,
+                srds.images,
+                srds.record_status recordStatus,
+                case srds.record_status
+                when 0 then '未通过'
+                when 1 then '新增'
+                when 2 then '已审核'
+                when 3 then '已处理'
+                when 4 then '已归档'
+                end as 'recordStatusName',
+                srds.record_user_no recordUserNo,
+                srds.record_user_phone recordUserPhone,
+                srds.record_location recordLocation,
+                srds.record_location_name recordLocationName,
+                srds.app_client_id appClientId,
+                DATE_FORMAT(srds.update_time,'%Y-%m-%d %H:%i:%s') updateTime,
+                DATE_FORMAT(srds.create_time,'%Y-%m-%d %H:%i:%s') createTime
+            from  scan_records srds
+            left join scan_area sa
+            on srds.area_no = sa.area_no
+        )
+        select * from (
+                        select
+                                (@r:=@r + 1) AS _row_number,
+                                id,
+                                areaNo,
+                                areaId,
+                                areaName,
+                                departId,
+                                departName,
+                                manageUser,
+                                manageUserName,
+                                managePhone,
+                                `desc`,
+                                itemIds,
+                                images,
+                                recordStatus,
+                                recordStatusName,
+                                recordUserNo,
+                                recordUserPhone,
+                                recordLocation,
+                                recordLocationName,
+                                appClientId,
+                                updateTime,
+                                createTime
+                        from myCharge,(select @r := 0) r
+                        where 1 = 1 and  areaNo = #{areaNo}
+                        <if test="searchKey != null and searchKey !=''">
+                            and departName like '%'  #{searchKey}  '%'
+                        </if>
+                        <if test="statusSelect != null and statusSelect !=''">
+                            and recordStatus = #{statusSelect}
+                        </if>
+                        <if test="buMenId != null and buMenId !=''">
+                            and departId = #{buMenId}
+                        </if>
+                        <if test="quYuId != null and quYuId !=''">
+                            and areaId = #{quYuId}
+                        </if>
+                        <if test="dateSelect != null and dateSelect !=''">
+                            and  DATE_FORMAT(createTime,'%Y-%m-%d') = #{dateSelect}
+                        </if>
+
+                        <!--<if test="clientInfo != null and clientInfo !=''">
+                            and  myCharge.appClientId = #{clientInfo.clientid}
+                        </if>-->
+                        order by myCharge.createTime desc
+                        ) T
+                        where <![CDATA[ T._row_number > #{startPageNum}
+                                        AND T._row_number <= #{endPageNum} ]]>
+    </select>
+
+    <select id="myChargeDepartList" parameterType="com.tglh.newscanningproject.scanning.entity.MyChargeList" resultType="com.tglh.newscanningproject.scanning.entity.MyChargeList">
+        with myCharge as (
+        select
+        srds.id,
+
+        srds.area_no areaNo,
+        (sa.id + 100000) areaId,
+        srds.area_name areaName,
+        srds.depart_id departId,
+        srds.depart_name departName,
+        srds.manage_user manageUser,
+        srds.manage_user_name manageUserName,
+        srds.manage_phone managePhone,
+        srds.`desc`,
+        srds.item_ids itemIds,
+        srds.images,
+        srds.record_status recordStatus,
+        case srds.record_status
+        when 0 then '未通过'
+        when 1 then '新增'
+        when 2 then '已审核'
+        when 3 then '已处理'
+        when 4 then '已归档'
+        end as 'recordStatusName',
+        srds.record_user_no recordUserNo,
+        srds.record_user_phone recordUserPhone,
+        srds.record_location recordLocation,
+        srds.record_location_name recordLocationName,
+        srds.app_client_id appClientId,
+        DATE_FORMAT(srds.update_time,'%Y-%m-%d %H:%i:%s') updateTime,
+        DATE_FORMAT(srds.create_time,'%Y-%m-%d %H:%i:%s') createTime
+        from  scan_records srds
+        left join scan_area sa
+        on srds.area_no = sa.area_no
+        )
+        select * from (
+        select
+            (@r:=@r + 1) AS _row_number,
+            id,
+            areaNo,
+            areaId,
+            areaName,
+            departId,
+            departName,
+            manageUser,
+            manageUserName,
+            managePhone,
+            `desc`,
+            itemIds,
+            images,
+            recordStatus,
+            recordStatusName,
+            recordUserNo,
+            recordUserPhone,
+            recordLocation,
+            recordLocationName,
+            appClientId,
+            updateTime,
+            createTime
+        from myCharge,(select @r := 0) r
+        where 1 = 1 and  departId = #{departId}
+        <if test="searchKey != null and searchKey !=''">
+            and departName like '%'  #{searchKey}  '%'
+        </if>
+        <if test="statusSelect != null and statusSelect !=''">
+            and recordStatus = #{statusSelect}
+        </if>
+        <if test="buMenId != null and buMenId !=''">
+            and departId = #{buMenId}
+        </if>
+        <if test="quYuId != null and quYuId !=''">
+            and areaId = #{quYuId}
+        </if>
+        <if test="dateSelect != null and dateSelect !=''">
+            and  DATE_FORMAT(createTime,'%Y-%m-%d') = #{dateSelect}
+        </if>
+
+        <!--<if test="clientInfo != null and clientInfo !=''">
+            and  myCharge.appClientId = #{clientInfo.clientid}
+        </if>-->
+        order by myCharge.createTime desc
+        ) T
+        where <![CDATA[ T._row_number > #{startPageNum}
+                                        AND T._row_number <= #{endPageNum} ]]>
+    </select>
+
+    <select id="selectChargeDepartTotal" parameterType="com.tglh.newscanningproject.scanning.entity.MyChargeList" resultType="java.util.HashMap">
+        select count(1) count
+        from scan_records srds
+        left join scan_area sa
+        on srds.area_no = sa.area_no
+        where 1 = 1 and  departId = #{departId}
+        <if test="searchKey != null and searchKey !=''">
+            and srds.depart_name like '%'  #{searchKey}  '%'
+        </if>
+        <if test="statusSelect != null and statusSelect !=''">
+            and srds.record_status = #{statusSelect}
+        </if>
+        <if test="buMenId != null and buMenId !=''">
+            and srds.depart_id = #{buMenId}
+        </if>
+        <if test="quYuId != null and quYuId !=''">
+            and sa.id+100000 = #{quYuId}
+        </if>
+        <if test="dateSelect != null and dateSelect !=''">
+            and  DATE_FORMAT(srds.create_time,'%Y-%m-%d') = #{dateSelect}
+        </if>
+        <!--<if test="clientInfo != null and clientInfo !=''">
+            and  myUpload.appClientId = #{clientInfo.clientid}
+        </if>-->
+    </select>
+
+    <select id="selectChargeAllSafeTotal" parameterType="com.tglh.newscanningproject.scanning.entity.MyChargeList" resultType="java.util.HashMap">
+        select count(1) count
+        from scan_records srds
+        left join scan_area sa
+        on srds.area_no = sa.area_no
+        where 1 = 1
+        <if test="searchKey != null and searchKey !=''">
+            and srds.depart_name like '%'  #{searchKey}  '%'
+        </if>
+        <if test="statusSelect != null and statusSelect !=''">
+            and srds.record_status = #{statusSelect}
+        </if>
+        <if test="buMenId != null and buMenId !=''">
+            and srds.depart_id = #{buMenId}
+        </if>
+        <if test="quYuId != null and quYuId !=''">
+            and sa.id+100000 = #{quYuId}
+        </if>
+        <if test="dateSelect != null and dateSelect !=''">
+            and  DATE_FORMAT(srds.create_time,'%Y-%m-%d') = #{dateSelect}
+        </if>
+
+        <!--<if test="clientInfo != null and clientInfo !=''">
+            and  myUpload.appClientId = #{clientInfo.clientid}
+        </if>-->
+    </select>
+
+    <select id="myChargeAllSafeList" parameterType="com.tglh.newscanningproject.scanning.entity.MyChargeList" resultType="com.tglh.newscanningproject.scanning.entity.MyChargeList">
+        with myCharge as (
+        select
+                srds.id,
+                srds.area_no areaNo,
+                (sa.id + 100000) areaId,
+                srds.area_name areaName,
+                srds.depart_id departId,
+                srds.depart_name departName,
+                srds.manage_user manageUser,
+                srds.manage_user_name manageUserName,
+                srds.manage_phone managePhone,
+                srds.`desc`,
+                srds.item_ids itemIds,
+                srds.images,
+                srds.record_status recordStatus,
+                case srds.record_status
+                when 0 then '未通过'
+                when 1 then '新增'
+                when 2 then '已审核'
+                when 3 then '已处理'
+                when 4 then '已归档'
+                end as 'recordStatusName',
+                srds.record_user_no recordUserNo,
+                srds.record_user_phone recordUserPhone,
+                srds.record_location recordLocation,
+                srds.record_location_name recordLocationName,
+                srds.app_client_id appClientId,
+                DATE_FORMAT(srds.update_time,'%Y-%m-%d %H:%i:%s') updateTime,
+                DATE_FORMAT(srds.create_time,'%Y-%m-%d %H:%i:%s') createTime
+        from  scan_records srds
+        left join scan_area sa
+        on srds.area_no = sa.area_no
+        )
+        select * from (
+        select
+                (@r:=@r + 1) AS _row_number,
+                id,
+                areaNo,
+                areaId,
+                areaName,
+                departId,
+                departName,
+                manageUser,
+                manageUserName,
+                managePhone,
+                `desc`,
+                itemIds,
+                images,
+                recordStatus,
+                recordStatusName,
+                recordUserNo,
+                recordUserPhone,
+                recordLocation,
+                recordLocationName,
+                appClientId,
+                updateTime,
+                createTime
+        from myCharge,(select @r := 0) r
+        where 1 = 1
+        <if test="searchKey != null and searchKey !=''">
+            and departName like '%'  #{searchKey}  '%'
+        </if>
+        <if test="statusSelect != null and statusSelect !=''">
+            and recordStatus = #{statusSelect}
+        </if>
+        <if test="buMenId != null and buMenId !=''">
+            and departId = #{buMenId}
+        </if>
+        <if test="quYuId != null and quYuId !=''">
+            and areaId = #{quYuId}
+        </if>
+        <if test="dateSelect != null and dateSelect !=''">
+            and  DATE_FORMAT(createTime,'%Y-%m-%d') = #{dateSelect}
+        </if>
+
+        <!--<if test="clientInfo != null and clientInfo !=''">
+            and  myCharge.appClientId = #{clientInfo.clientid}
+        </if>-->
+        order by myCharge.createTime desc
+        ) T
+        where <![CDATA[ T._row_number > #{startPageNum}
+                                        AND T._row_number <= #{endPageNum} ]]>
+    </select>
+
+</mapper>
+

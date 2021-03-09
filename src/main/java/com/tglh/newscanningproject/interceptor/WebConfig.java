@@ -15,8 +15,6 @@ import javax.servlet.MultipartConfigElement;
 public class WebConfig extends WebMvcConfigurerAdapter {
 
 
-
-
     @Bean
     public AuthenticationInterceptor authenticationInterceptor() {
         return new AuthenticationInterceptor();
@@ -26,6 +24,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         // 添加拦截器，配置拦截地址
         registry.addInterceptor(authenticationInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/user/login");
+                .excludePathPatterns("/user/*","/home/*","/safeScan/*");
     }
 }
