@@ -22,4 +22,6 @@ public class User {
 
     //部门区域id 数组选择
     private List departSelect;
+    private Integer secondDepart;
+    private String userPost;
 }

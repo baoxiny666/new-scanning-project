@@ -12,4 +12,6 @@ public interface UserService {
    List<DepartMent> selectTree();
 
    void regist(User user);
+
+   Integer postInformation(User user);
 }

@@ -34,20 +34,27 @@ public class UserController {
     @ResponseBody
     public String regist(String encrypted){
         JSONObject jsonObject=new JSONObject();
-
-        //解密 --- 前端代码传过来的 用户编码 和 密码
-        String encryptedCode = AesUtil.decrypt(encrypted,AesUtil.KEY);
-        JSONObject encryptedCodeObj=JSONObject.parseObject(encryptedCode);
-        User user = (User) JSONObject.toJavaObject(encryptedCodeObj, User.class);  //通过JSONObject.toBean()方法进行对象间的转换
-        List departSelect = user.getDepartSelect();
-        user.setDepartId(Integer.valueOf(departSelect.get(0).toString()));
-        user.setPostId(Integer.valueOf(departSelect.get(1).toString()));
-        //解码后 --- 放到User对象中
-        Md5 md5 = new Md5();
-        String oneSecret = md5.encrypt32(user.getUserNo() + "" + user.getUserPwd()).substring(0, 12);
-        String twoSecret = md5.encrypt32(oneSecret);
-        user.setUserPwd(twoSecret);
         try{
+            //解密 --- 前端代码传过来的 用户编码 和 密码
+            String encryptedCode = AesUtil.decrypt(encrypted,AesUtil.KEY);
+            JSONObject encryptedCodeObj=JSONObject.parseObject(encryptedCode);
+            User user = (User) JSONObject.toJavaObject(encryptedCodeObj, User.class);  //通过JSONObject.toBean()方法进行对象间的转换
+            List departSelect = user.getDepartSelect();
+            if(departSelect.size()<2){
+                user.setDepartId(Integer.valueOf(departSelect.get(0).toString()));
+                user.setSecondDepart(-1);
+            }else{
+                user.setDepartId(Integer.valueOf(departSelect.get(0).toString()));
+                user.setSecondDepart(Integer.valueOf(departSelect.get(1).toString()));
+            }
+            //解码后 --- 放到User对象中
+            Md5 md5 = new Md5();
+            String oneSecret = md5.encrypt32(user.getUserNo() + "" + user.getUserPwd()).substring(0, 12);
+            String twoSecret = md5.encrypt32(oneSecret);
+            user.setUserPwd(twoSecret);
+            //将职位信息填充到 sys_post职位表
+            Integer postId = userService.postInformation(user);
+            user.setPostId(postId);
             userService.regist(user);
             JSONObject obj = new JSONObject();
             obj.put("isSuccess", true);

@@ -30,4 +30,10 @@ public class UserServiceImpl implements UserService {
     public void regist(User user) {
         userMapper.regist(user);
     }
+
+    @Override
+    public Integer postInformation(User user) {
+        Integer postId = userMapper.insertPost(user);
+        return  user.getId();
+    }
 }

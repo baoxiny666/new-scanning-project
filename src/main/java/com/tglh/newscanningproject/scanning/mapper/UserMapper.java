@@ -17,4 +17,6 @@ public interface UserMapper {
 
     //注册人员
     void regist(User user);
+
+    Integer insertPost(User user);
 }
