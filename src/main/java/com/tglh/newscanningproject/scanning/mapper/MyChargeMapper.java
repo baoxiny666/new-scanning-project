@@ -14,6 +14,15 @@ public interface MyChargeMapper {
 
     ScanPermission selectCurrentPermission(MyChargeList myChargeList);
 
+    //查询当前id对应的详细信息
+    MyChargeList selectCurrentIdDetail(String id);
+    //查询当前id 对应的操作信息
+    List<ScanMyChargeAction> selectScanActionRecords(String id);
+    //查询详细页面的用户有哪些权限
+    ScanPermission  selectDetailPermission(String userNo);
+
+    List<ScanMyChargeAction> selectScanActionHandle(String id);
+
 
     //查看区域部分
     List<MyChargeList> myChargeAreaList(MyChargeList myChargeList);

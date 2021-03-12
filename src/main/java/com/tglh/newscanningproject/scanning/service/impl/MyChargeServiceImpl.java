@@ -64,6 +64,30 @@ public class MyChargeServiceImpl implements MyChargeService {
     }
 
     @Override
+    public MyChargeList selectCurrentIdDetail(String id) {
+       MyChargeList myChargeListDetail =  myChargeMapper.selectCurrentIdDetail(id);
+       return myChargeListDetail;
+    }
+
+    @Override
+    public List<ScanMyChargeAction> selectScanActionRecords(String id) {
+        List<ScanMyChargeAction> list  = myChargeMapper.selectScanActionRecords(id);
+        return list;
+    }
+
+    @Override
+    public List<ScanMyChargeAction> selectScanActionHandle(String id) {
+        List<ScanMyChargeAction> scanMyChargeActionList = myChargeMapper.selectScanActionHandle(id);
+        return scanMyChargeActionList;
+    }
+
+    @Override
+    public ScanPermission selectDetailPermission(String userNo) {
+        ScanPermission scanPermission =  myChargeMapper.selectDetailPermission(userNo);
+        return scanPermission;
+    }
+
+    @Override
     public Integer selectListPageSize() {
         String listPageSize = myChargeMapper.selectListPageSize();
         return Integer.valueOf(listPageSize);
