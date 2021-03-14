@@ -95,7 +95,7 @@ public class MyChargeController {
                     JSONObject obj = new JSONObject();
                     obj.put("isVerify",0);
                     obj.put("isHandle",0);
-                    obj.put("isDone",1);
+                    obj.put("isDone",0);
                     obj.put("recordInfo",myChargeListDetail);
                     obj.put("stepInfo",stepInfoList);
                     //已经到达为 3 状态的阶段
@@ -126,7 +126,7 @@ public class MyChargeController {
                     if(isContainsEncodeOne && isContainsEncodeTwo){
                         JSONObject obj = new JSONObject();
                         obj.put("isVerify",0);
-                        obj.put("isHandle",1);
+                        obj.put("isHandle",0);
                         obj.put("isDone",0);
                         obj.put("recordInfo",myChargeListDetail);
                         obj.put("stepInfo",stepInfoList);
@@ -139,7 +139,7 @@ public class MyChargeController {
                         return jsonObject.toJSONString();
                     }else{
                         JSONObject obj = new JSONObject();
-                        obj.put("isVerify",1);
+                        obj.put("isVerify",0);
                         obj.put("isHandle",0);
                         obj.put("isDone",0);
                         obj.put("recordInfo",myChargeListDetail);
