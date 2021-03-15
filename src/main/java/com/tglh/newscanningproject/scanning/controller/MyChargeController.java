@@ -1,6 +1,7 @@
 package com.tglh.newscanningproject.scanning.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.tglh.newscanningproject.scanning.entity.ExecuteOperate;
 import com.tglh.newscanningproject.scanning.entity.MyChargeList;
 import com.tglh.newscanningproject.scanning.entity.ScanMyChargeAction;
 import com.tglh.newscanningproject.scanning.entity.ScanPermission;
@@ -21,7 +22,64 @@ import java.util.List;
 public class MyChargeController {
     @Autowired
     private MyChargeService myChargeService;
-    //查看详情信息
+    //现在开始进行审核相关操作
+    @RequestMapping("/verifyAction")
+    @ResponseBody
+    private String verifyAction(String encrypted) {
+        try{
+            String encryptedCode = AesUtil.decrypt(encrypted,AesUtil.KEY);
+            JSONObject encryptedCodeObj=JSONObject.parseObject(encryptedCode);
+            System.out.println(encryptedCodeObj);
+            ExecuteOperate executeOperate = (ExecuteOperate) JSONObject.toJavaObject(encryptedCodeObj, ExecuteOperate.class);
+            Integer  insertVerifyActionInteger = myChargeService.insertVerifyAction(executeOperate);
+            JSONObject obj = new JSONObject();
+            obj.put("code",200);
+            obj.put("message","成功");
+            return obj.toJSONString();
+
+        }catch (Exception e){
+            JSONObject obj = new JSONObject();
+            obj.put("code",407);
+            obj.put("message","失败");
+            return obj.toJSONString();
+        }
+
+    }
+
+
+
+    //现在开始进行处理相关操作
+    @RequestMapping("/handleAction")
+    @ResponseBody
+    private String handleAction(String encrypted) {
+        String encryptedCode = AesUtil.decrypt(encrypted,AesUtil.KEY);
+        JSONObject encryptedCodeObj=JSONObject.parseObject(encryptedCode);
+        System.out.println(encryptedCodeObj);
+        return null;
+    }
+
+    //现在开始进行归档相关操作
+    @RequestMapping("/doneAction")
+    @ResponseBody
+    private String doneAction(String encrypted) {
+        try{
+            String encryptedCode = AesUtil.decrypt(encrypted,AesUtil.KEY);
+            JSONObject encryptedCodeObj=JSONObject.parseObject(encryptedCode);
+            System.out.println(encryptedCodeObj);
+            ExecuteOperate executeOperate = (ExecuteOperate) JSONObject.toJavaObject(encryptedCodeObj, ExecuteOperate.class);
+            Integer  insertDoneActionInteger = myChargeService.insertDoneAction(executeOperate);
+            JSONObject obj = new JSONObject();
+            obj.put("code",200);
+            obj.put("message","成功");
+            return obj.toJSONString();
+        }catch (Exception e){
+            JSONObject obj = new JSONObject();
+            obj.put("code",407);
+            obj.put("message","失败");
+            return obj.toJSONString();
+        }
+
+    }
 
 
     //我负责的点击详情进入页面

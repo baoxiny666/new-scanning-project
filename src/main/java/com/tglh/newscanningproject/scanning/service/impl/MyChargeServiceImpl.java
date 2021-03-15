@@ -8,6 +8,8 @@ import com.tglh.newscanningproject.scanning.service.MyChargeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -61,6 +63,36 @@ public class MyChargeServiceImpl implements MyChargeService {
     public ScanPermission selectCurrentPermission(MyChargeList myChargeList) {
         ScanPermission scanPermission = myChargeMapper.selectCurrentPermission(myChargeList);
         return scanPermission;
+    }
+
+    @Override
+    public Integer insertVerifyAction(ExecuteOperate executeOperate) {
+//        myChargeMapper
+        if(true == executeOperate.getActionType()){
+            executeOperate.setRecordStatus("2");
+        }else{
+            executeOperate.setRecordStatus("0");
+        }
+        Integer insertVerifyActionInteger =  myChargeMapper.insertVerifyAction(executeOperate);
+        return insertVerifyActionInteger;
+    }
+
+    @Override
+    public Integer insertDoneAction(ExecuteOperate executeOperate) {
+        //日期格式化打印
+        Date d = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String dateNowStr = sdf.format(d);
+        executeOperate.setActionTime(dateNowStr);
+        executeOperate.setUpdateTime(dateNowStr);
+        executeOperate.setCreateTime(dateNowStr);
+        if(true == executeOperate.getActionType()){
+            executeOperate.setRecordStatus("4");
+        }else{
+            executeOperate.setRecordStatus("0");
+        }
+        Integer insertDoneActionInteger =  myChargeMapper.insertDoneAction(executeOperate);
+        return insertDoneActionInteger;
     }
 
     @Override

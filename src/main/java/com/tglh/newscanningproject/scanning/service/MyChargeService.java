@@ -7,6 +7,11 @@ public interface MyChargeService {
       Integer selectListPageSize();
       ScanPermission selectCurrentPermission(MyChargeList myChargeList);
 
+      //审核按钮点击后执行的操作
+      Integer insertVerifyAction(ExecuteOperate executeOperate);
+      //是否归档点击是 或者 否
+      Integer insertDoneAction(ExecuteOperate executeOperate);
+
       //查询传入的ID 对应的详细信息
       MyChargeList selectCurrentIdDetail(String id);
       //查询传入id对应的scan_action表中对应的记录数

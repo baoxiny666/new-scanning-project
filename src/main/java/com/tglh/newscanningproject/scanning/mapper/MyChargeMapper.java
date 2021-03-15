@@ -14,6 +14,11 @@ public interface MyChargeMapper {
 
     ScanPermission selectCurrentPermission(MyChargeList myChargeList);
 
+    //关于审核操作相关的内容
+    Integer insertVerifyAction(ExecuteOperate executeOperate);
+    //关于归档操作相关内容
+    Integer insertDoneAction(ExecuteOperate executeOperate);
+
     //查询当前id对应的详细信息
     MyChargeList selectCurrentIdDetail(String id);
     //查询当前id 对应的操作信息
