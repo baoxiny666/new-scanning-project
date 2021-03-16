@@ -7,6 +7,8 @@ import com.tglh.newscanningproject.scanning.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 @Service
@@ -21,6 +23,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User loginCheckUpdatePwd(User user) {
+        User loginCheckUpdatePwd = userMapper.loginCheckUpdatePwd(user);
+        return loginCheckUpdatePwd;
+    }
+
+    @Override
+    public User updateUserPwd(User user) {
+        Integer userUpdate = userMapper.updateUserPwd(user);
+        return user;
+    }
+
+    @Override
     public List<DepartMent> selectTree() {
         List<DepartMent> list = userMapper.selectTree();
         return list;
@@ -28,11 +42,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void regist(User user) {
+        //日期格式化打印
+        Date d = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String str1 = sdf.format(d);
+        user.setUpdateTime(str1);
+        user.setCreateTime(str1);
         userMapper.regist(user);
     }
 
     @Override
     public Integer postInformation(User user) {
+        //日期格式化打印
+        Date d = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String str1 = sdf.format(d);
+        user.setUpdateTime(str1);
+        user.setCreateTime(str1);
         Integer postId = userMapper.insertPost(user);
         return  user.getId();
     }

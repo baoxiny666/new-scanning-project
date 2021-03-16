@@ -11,6 +11,8 @@ public interface MyChargeService {
       Integer insertVerifyAction(ExecuteOperate executeOperate);
       //是否归档点击是 或者 否
       Integer insertDoneAction(ExecuteOperate executeOperate);
+      //进行处理的操作
+      Integer insertHandleAction(ExecuteOperate executeOperate);
 
       //查询传入的ID 对应的详细信息
       MyChargeList selectCurrentIdDetail(String id);

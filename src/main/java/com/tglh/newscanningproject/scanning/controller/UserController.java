@@ -3,6 +3,7 @@ package com.tglh.newscanningproject.scanning.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.tglh.newscanningproject.scanning.entity.DepartMent;
+import com.tglh.newscanningproject.scanning.entity.FindPwdYes;
 import com.tglh.newscanningproject.scanning.entity.MyUploadList;
 import com.tglh.newscanningproject.scanning.entity.User;
 import com.tglh.newscanningproject.scanning.service.UserService;
@@ -152,7 +153,49 @@ public class UserController {
 
     }
 
+    //修改密码
+    @RequestMapping("/findPwdYes")
+    @ResponseBody
+    public  String findPwdYes(String encrypted){
+        //解密 --- 前端代码传过来的 用户名 重置密码
+        JSONObject obj = new JSONObject();
+        try{
+            String encryptedCode = AesUtil.decrypt(encrypted,AesUtil.KEY);
+            JSONObject encryptedCodeObj=JSONObject.parseObject(encryptedCode);
+            FindPwdYes findPwdYes = (FindPwdYes) JSONObject.toJavaObject(encryptedCodeObj, FindPwdYes.class);  //通过JSONObject.toBean()方法进行对象间的转换
+            String userNo = findPwdYes.getUserNo();
+            String userPwd = findPwdYes.getUserOnePwd();
+            User user = new User();
+            user.setUserNo(userNo);
+            user.setUserPwd(userPwd);
+            Md5 md5 = new Md5();
+            String oneSecret = md5.encrypt32(userNo + "" + userPwd).substring(0, 12);
+            String twoSecret = md5.encrypt32(oneSecret);
+            user.setUserPwd(twoSecret);
+            //1.先根据用户名查询是否存在该用户，如果没有让他去登陆
+            //去往数据库查询是否有此用户
+            User checkUserBack = userService.loginCheckUpdatePwd(user);
 
+            if(checkUserBack != null){
+                User updateUserPwd =  userService.updateUserPwd(user);
+                obj.put("isSuccess", true);
+                obj.put("message", "重置密码成功");
+                obj.put("code",200);
+                return obj.toJSONString();
+            }else{
+                obj.put("isSuccess", false);
+                obj.put("message", "此用户未注册");
+                obj.put("code",508);
+                return obj.toJSONString();
+            }
+        }catch (Exception e){
+            obj.put("isSuccess", false);
+            obj.put("message", "报错");
+            obj.put("code",407);
+            return obj.toJSONString();
+        }
+
+    }
 
 
     /**

@@ -96,6 +96,12 @@ public class MyChargeServiceImpl implements MyChargeService {
     }
 
     @Override
+    public Integer insertHandleAction(ExecuteOperate executeOperate) {
+        Integer insertHandleActionInteger =  myChargeMapper.insertHandleAction(executeOperate);
+        return insertHandleActionInteger;
+    }
+
+    @Override
     public MyChargeList selectCurrentIdDetail(String id) {
        MyChargeList myChargeListDetail =  myChargeMapper.selectCurrentIdDetail(id);
        return myChargeListDetail;

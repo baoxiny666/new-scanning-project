@@ -15,9 +15,9 @@ public class User {
     private String userPhone;
     private Integer postId;
     private String userPhoto;
-    private Date createTime;
-    private Date updateTime;
-    private Date loginTime;
+    private String createTime;
+    private String updateTime;
+    private String loginTime;
     private Integer userStatus;
 
     //部门区域id 数组选择

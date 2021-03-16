@@ -8,7 +8,8 @@ import java.util.Map;
 
 public interface UserService {
    User loginCheck(User user);
-
+   User loginCheckUpdatePwd(User user);
+   User updateUserPwd(User user);
    List<DepartMent> selectTree();
 
    void regist(User user);

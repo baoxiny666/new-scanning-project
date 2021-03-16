@@ -9,17 +9,28 @@ import com.tglh.newscanningproject.scanning.service.MyChargeService;
 import com.tglh.newscanningproject.utils.AesUtil;
 import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Controller
 @RequestMapping("myCharge")
 public class MyChargeController {
+    //获取环境对象
+    @Autowired
+    private Environment env;
     @Autowired
     private MyChargeService myChargeService;
     //现在开始进行审核相关操作
@@ -52,10 +63,23 @@ public class MyChargeController {
     @RequestMapping("/handleAction")
     @ResponseBody
     private String handleAction(String encrypted) {
-        String encryptedCode = AesUtil.decrypt(encrypted,AesUtil.KEY);
-        JSONObject encryptedCodeObj=JSONObject.parseObject(encryptedCode);
-        System.out.println(encryptedCodeObj);
-        return null;
+        try {
+            String encryptedCode = AesUtil.decrypt(encrypted, AesUtil.KEY);
+            JSONObject encryptedCodeObj = JSONObject.parseObject(encryptedCode);
+            System.out.println(encryptedCodeObj);
+            ExecuteOperate executeOperate = (ExecuteOperate) JSONObject.toJavaObject(encryptedCodeObj, ExecuteOperate.class);
+            Integer insertHandleActionInteger = myChargeService.insertHandleAction(executeOperate);
+            //存储在数据库表中
+            JSONObject obj = new JSONObject();
+            obj.put("code", 200);
+            obj.put("message", "成功");
+            return obj.toJSONString();
+        }catch (Exception e){
+            JSONObject obj = new JSONObject();
+            obj.put("code",407);
+            obj.put("message","失败");
+            return obj.toJSONString();
+        }
     }
 
     //现在开始进行归档相关操作
@@ -471,5 +495,8 @@ public class MyChargeController {
         }
         return null;
     }
+
+
+
 
 }

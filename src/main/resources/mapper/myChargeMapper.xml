@@ -74,6 +74,20 @@
                 STR_TO_DATE(#{createTime}, '%Y-%m-%d %H:%i:%s'),
                 STR_TO_DATE(#{updateTime}, '%Y-%m-%d %H:%i:%s'))
     </insert>
+    <insert id="insertHandleAction" parameterType="com.tglh.newscanningproject.scanning.entity.ExecuteOperate"  >
+        insert into scan_records_action(record_id,action_type,action_user_no,action_user_name,action_user_phone,action_desc,action_images,action_time,create_time,update_time)
+        values( #{recordId},
+                #{recordStatus},
+                #{userInfo.userNo},
+                #{userInfo.userName},
+                #{userInfo.userPhoto},
+                #{actionDesc},
+                #{actionImages},
+                STR_TO_DATE(#{actionTime}, '%Y-%m-%d %H:%i:%s'),
+                STR_TO_DATE(#{createTime}, '%Y-%m-%d %H:%i:%s'),
+                STR_TO_DATE(#{updateTime}, '%Y-%m-%d %H:%i:%s'))
+    </insert>
+
 
     <select id="selectScanActionRecords" parameterType="java.lang.String"    resultType="com.tglh.newscanningproject.scanning.entity.ScanMyChargeAction">
       SELECT

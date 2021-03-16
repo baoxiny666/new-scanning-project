@@ -20,7 +20,23 @@
         where user_no= #{userNo}
         and user_pwd= #{userPwd}
     </select>
-
+    <select id="loginCheckUpdatePwd" parameterType="com.tglh.newscanningproject.scanning.entity.User"  resultType="com.tglh.newscanningproject.scanning.entity.User">
+        select
+            id,
+            user_no userNo,
+            user_name userName,
+            user_pwd userPwd,
+            user_phone userPhone,
+            post_id postId,
+            depart_id departId,
+            user_photo userPhoto ,
+            DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') createTime,
+            DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') updateTime,
+            DATE_FORMAT(login_time,'%Y-%m-%d %H:%i:%s') loginTime,
+            user_status userStatus
+        from sys_users
+        where user_no= #{userNo}
+    </select>
     <select id="selectTree"    resultType="com.tglh.newscanningproject.scanning.entity.DepartMent">
         select
             id,
@@ -29,11 +45,12 @@
         from sys_department
     </select>
     <insert id="insertPost" parameterType="com.tglh.newscanningproject.scanning.entity.User" useGeneratedKeys="true" keyProperty="id"  keyColumn="id">
-        insert into sys_post(depart_id,post_name,post_level,create_time) values (
+        insert into sys_post(depart_id,post_name,post_level,create_time,update_time) values (
             #{departId},
             #{userPost},
             1,
-            sysdate()
+            DATE_FORMAT(#{createTime}, '%Y-%m-%d %H:%i:%s'),
+            DATE_FORMAT(#{updateTime}, '%Y-%m-%d %H:%i:%s')
         )
     </insert>
     <insert id="regist" parameterType="com.tglh.newscanningproject.scanning.entity.User">
@@ -55,12 +72,16 @@
             #{departId},
             #{userPhone},
             #{postId},
-             sysdate(),
-             sysdate(),
+            DATE_FORMAT(#{createTime}, '%Y-%m-%d %H:%i:%s'),
+            DATE_FORMAT(#{updateTime}, '%Y-%m-%d %H:%i:%s'),
              0,
             #{secondDepart}
         )
     </insert>
-
+    <update id="updateUserPwd" parameterType="com.tglh.newscanningproject.scanning.entity.User">
+         update sys_users
+         set user_pwd = #{userPwd}
+         where user_no = #{userNo}
+    </update>
 </mapper>
 

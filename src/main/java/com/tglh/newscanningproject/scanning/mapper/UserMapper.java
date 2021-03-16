@@ -9,11 +9,14 @@ import java.util.List;
 @Repository
 public interface UserMapper {
     //验证登录的正确性
-    public User loginCheck(User user);
+    User loginCheck(User user);
+    //验证重置密码过程中是否有此用户名
+    User loginCheckUpdatePwd(User user);
+    //更改代码
+    Integer updateUserPwd(User user);
 
     //获取部门菜单
-    public List<DepartMent> selectTree();
-
+    List<DepartMent> selectTree();
 
     //注册人员
     void regist(User user);
