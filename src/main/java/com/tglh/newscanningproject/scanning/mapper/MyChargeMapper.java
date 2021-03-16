@@ -20,7 +20,8 @@ public interface MyChargeMapper {
     Integer insertDoneAction(ExecuteOperate executeOperate);
     //关于是否处理的相关内容
     Integer insertHandleAction(ExecuteOperate executeOperate);
-
+    //更新主表updateScanRecords
+    Integer updateScanRecords(ExecuteOperate executeOperate);
     //查询当前id对应的详细信息
     MyChargeList selectCurrentIdDetail(String id);
     //查询当前id 对应的操作信息

@@ -31,6 +31,14 @@ public interface SafeScanMapper {
     //查新列表内容
     public List  myList(MyUploadList myUploadList);
 
+    //查询当前id对应的详细信息
+    MyUploadList selectCurrentIdDetail(String id);
+    //查询当前id 对应的操作信息
+    List<ScanMyListAction> selectScanActionRecords(String id);
+    //查询详细页面的用户有哪些权限
+    ScanPermission  selectDetailPermission(String userNo);
+
+    List<ScanMyListAction> selectScanActionHandle(String id);
 
 
 

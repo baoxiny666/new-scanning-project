@@ -107,9 +107,9 @@ public class MyChargeController {
 
 
     //我负责的点击详情进入页面
-    @RequestMapping("/showRecord")
+    @RequestMapping("/showMyChargeRecord")
     @ResponseBody
-    private String showRecord(String  id,String userNo) {
+    private String showMyChargeRecord(String  id,String userNo) {
         /*
                -----展示详细内容
               获取 scan_records 记录中的ID之后去(数据库表scan_records中) 查询对应的记录，

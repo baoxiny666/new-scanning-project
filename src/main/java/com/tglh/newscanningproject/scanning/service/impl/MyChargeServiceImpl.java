@@ -67,13 +67,22 @@ public class MyChargeServiceImpl implements MyChargeService {
 
     @Override
     public Integer insertVerifyAction(ExecuteOperate executeOperate) {
-//        myChargeMapper
+        //日期格式化打印
+        Date d = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String dateNowStr = sdf.format(d);
+        executeOperate.setActionTime(dateNowStr);
+        executeOperate.setUpdateTime(dateNowStr);
+        executeOperate.setCreateTime(dateNowStr);
+        //        myChargeMapper
         if(true == executeOperate.getActionType()){
             executeOperate.setRecordStatus("2");
         }else{
             executeOperate.setRecordStatus("0");
         }
         Integer insertVerifyActionInteger =  myChargeMapper.insertVerifyAction(executeOperate);
+        //更新scan_records主表的状态
+        myChargeMapper.updateScanRecords(executeOperate);
         return insertVerifyActionInteger;
     }
 
@@ -92,12 +101,27 @@ public class MyChargeServiceImpl implements MyChargeService {
             executeOperate.setRecordStatus("0");
         }
         Integer insertDoneActionInteger =  myChargeMapper.insertDoneAction(executeOperate);
+        //更新scan_records主表的状态
+        myChargeMapper.updateScanRecords(executeOperate);
         return insertDoneActionInteger;
     }
 
     @Override
     public Integer insertHandleAction(ExecuteOperate executeOperate) {
+        //日期格式化打印
+        Date d = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String dateNowStr = sdf.format(d);
+        executeOperate.setActionTime(dateNowStr);
+        executeOperate.setUpdateTime(dateNowStr);
+        executeOperate.setCreateTime(dateNowStr);
+
+        executeOperate.setRecordStatus("3");
+
+
         Integer insertHandleActionInteger =  myChargeMapper.insertHandleAction(executeOperate);
+        //更新scan_records主表的状态
+        myChargeMapper.updateScanRecords(executeOperate);
         return insertHandleActionInteger;
     }
 

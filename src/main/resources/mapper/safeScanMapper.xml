@@ -246,5 +246,121 @@
         where <![CDATA[ T._row_number > #{startPageNum}
                         AND T._row_number <= #{endPageNum} ]]>
         </select>
+
+    <!--有关详情的内容-->
+    <select id="selectCurrentPermission" parameterType="com.tglh.newscanningproject.scanning.entity.MyUploadList"    resultType="com.tglh.newscanningproject.scanning.entity.ScanPermission">
+        select
+             id,
+             user_no userNo,
+             role_no roleNo,
+             depart_id  departId,
+             area_no areaNo,
+             DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') updateTime,
+             DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') createTime
+        from scan_permission where user_no = #{userInfo.userNo}
+    </select>
+
+    <select id="selectCurrentIdDetail" parameterType="java.lang.String"    resultType="com.tglh.newscanningproject.scanning.entity.MyUploadList">
+        select
+          id,
+          area_no areaNo,
+          area_name areaName,
+          depart_id departId,
+          depart_name departName,
+          manage_user manageUser,
+          manage_user_name manageUserName,
+          manage_phone managePhone,
+          `desc`,
+          item_ids itemIds,
+          images,
+          record_status recordStatus,
+          record_user_no recordUserNo,
+          record_user_name recordUserName,
+          record_user_phone recordUserPhone,
+          record_location recordLocation,
+          record_location_name recordLocationName,
+          app_client_id appClientId,
+          DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') updateTime,
+          DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') createTime
+        from scan_records  where id = #{id}
+    </select>
+
+    <select id="selectDetailPermission" parameterType="java.lang.String"    resultType="com.tglh.newscanningproject.scanning.entity.ScanPermission">
+        select
+             id,
+             user_no userNo,
+             role_no roleNo,
+             depart_id  departId,
+             area_no areaNo,
+             DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') updateTime,
+             DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') createTime
+        from scan_permission where user_no = #{userNo}
+    </select>
+
+    <select id="selectScanActionRecords" parameterType="java.lang.String"    resultType="com.tglh.newscanningproject.scanning.entity.ScanMyListAction">
+      SELECT
+            id,
+            record_id recordId,
+            action_type actionType,
+        CASE
+                action_type
+                WHEN 0 THEN
+                '未通过'
+                WHEN 1 THEN
+                '新增'
+                WHEN 2 THEN
+                '审核'
+                WHEN 3 THEN
+                '处理'
+                WHEN 4 THEN
+                '归档'
+            END AS 'actionTypeName',
+            action_item_ids actionItemIds,
+            action_desc actionDesc,
+            action_images actionImages ,
+            action_user_no actionUserNo,
+            action_user_name actionUserName,
+            action_user_phone actionUserPhone,
+            action_location actionLocation,
+            action_location_name actionLocationName,
+            app_client_id appClientId,
+            DATE_FORMAT( action_time, '%Y-%m-%d %H:%i:%s' ) actionTime,
+            DATE_FORMAT( update_time, '%Y-%m-%d %H:%i:%s' ) updateTime,
+            DATE_FORMAT( create_time, '%Y-%m-%d %H:%i:%s' ) createTime
+        FROM
+            scan_records_action
+        WHERE
+            record_id = #{id}
+        ORDER BY
+            id;
+    </select>
+
+    <select id="selectScanActionHandle" parameterType="java.lang.String"    resultType="com.tglh.newscanningproject.scanning.entity.ScanMyChargeAction">
+        select
+            id,
+            record_id recordId,
+            action_type actionType,
+            case action_type
+                when 0 then '未通过'
+                when 1 then '新增'
+                when 2 then '审核'
+                when 3 then '处理'
+                when 4 then '归档'
+            end as 'actionTypeName',
+            action_item_ids actionItemIds,
+            action_desc   actionDesc,
+            action_images actionImages ,
+            action_user_no  actionUserNo,
+            action_user_name actionUserName,
+            action_user_phone actionUserPhone,
+            action_location actionLocation,
+            action_location_name   actionLocationName,
+            app_client_id appClientId,
+            DATE_FORMAT(action_time,'%Y-%m-%d %H:%i:%s') actionTime,
+            DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') updateTime,
+            DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') createTime
+        from scan_records_action where record_id = #{id} and  action_type = 3;
+    </select>
+
 </mapper>
 

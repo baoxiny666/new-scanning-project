@@ -103,6 +103,29 @@ public class SafeScanServiceImpl implements SafeScanService {
         return total;
     }
 
+    @Override
+    public MyUploadList selectCurrentIdDetail(String id) {
+        MyUploadList myUploadListDetail =  safeScanMapper.selectCurrentIdDetail(id);
+        return myUploadListDetail;
+    }
+
+    @Override
+    public List<ScanMyListAction> selectScanActionRecords(String id) {
+        List<ScanMyListAction> list  = safeScanMapper.selectScanActionRecords(id);
+        return list;
+    }
+
+    @Override
+    public List<ScanMyListAction> selectScanActionHandle(String id) {
+        List<ScanMyListAction> scanMyListActionList = safeScanMapper.selectScanActionHandle(id);
+        return scanMyListActionList;
+    }
+
+    @Override
+    public ScanPermission selectDetailPermission(String userNo) {
+        ScanPermission scanPermission =  safeScanMapper.selectDetailPermission(userNo);
+        return scanPermission;
+    }
 
     private List<ScanArea> createTree(int pid, List<ScanArea> areaAll) {
         List<ScanArea> area = new ArrayList<>();

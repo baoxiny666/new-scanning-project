@@ -28,7 +28,8 @@ public class MyUploadList {
     private String createTime;
     private String updateTime;
     private String recordStatusName;
-
+    //新加的隐患项
+    private List recordItems;
     //起始页 最终页
     private Integer startPageNum;
     private Integer endPageNum;
