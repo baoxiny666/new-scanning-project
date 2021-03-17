@@ -1,5 +1,6 @@
 package com.tglh.newscanningproject.scanning.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.tglh.newscanningproject.scanning.entity.*;
 import com.tglh.newscanningproject.scanning.service.SafeScanService;
@@ -18,7 +19,9 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
+import java.nio.channels.FileChannel;
 import java.sql.Blob;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -125,7 +128,7 @@ public class SafeScanController {
         return obj.toJSONString();
     }
     //2021-0316 在我上报的内容中也加入了审核归档内容--暂定 我上报的点击详情进入页面
- /*   @RequestMapping("/showMyListRecord")
+   /* @RequestMapping("/showMyListRecord")
     @ResponseBody
     private String showMyListRecord(String  id,String userNo) {
 
@@ -694,5 +697,106 @@ public class SafeScanController {
         }
 
         return "";
+    }
+
+    @RequestMapping("/fileList")
+    @ResponseBody
+    public String fileList()  {
+        JSONObject totalObject = new JSONObject();
+        Integer index = 1;
+        try {
+            List listname = new ArrayList();
+            String propertyfileUpload = env.getProperty("vocs.fileUpload.mustReadSavePath");
+            String mustStaticReadHttpPath = env.getProperty("vocs.fileUpload.mustReadRealHttpPath");
+            totalObject.put("baseURL", mustStaticReadHttpPath);
+            readAllFile(propertyfileUpload, listname, mustStaticReadHttpPath,index);
+            totalObject.put("code",200);
+            totalObject.put("message","成功");
+            totalObject.put("data",listname);
+            return totalObject.toJSONString();
+
+        }catch (Exception e){
+            totalObject.put("code",407);
+            totalObject.put("message","失败");
+            return totalObject.toJSONString();
+        }
+    }
+
+    public static void readAllFile(String filepath,List listname,String mustStaticReadHttpPath,Integer index) throws IOException {
+        File file= new File(filepath);
+        Calendar cal = Calendar.getInstance();
+        JSONObject obj = new JSONObject();
+        if(!file.isDirectory()){
+            JSONObject fileObj = new JSONObject();
+            FileInputStream fis = null;
+            FileChannel fileChannel = null;
+            //获取文件名称
+            String fileName = file.getName();
+            //获取文件后缀名
+            String fileSuffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            //获取文件最后的修改时间
+            long changeTime = file.lastModified();
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            cal.setTimeInMillis(changeTime);
+            String fileTime = formatter.format(cal.getTime());
+            //获取文件大小
+            String fileSize;
+            fis = new FileInputStream(file);
+            fileChannel = fis.getChannel();
+            DecimalFormat df = new DecimalFormat("0");
+            if((double)((double) fis.available() / 1024) > 1000) {
+                fileSize= df.format((double)((double) fileChannel.size() / 1024 / 1024)) + "M";
+            } else {
+                fileSize= df.format((double)((double) fis.available() / 1024)) + "K";
+            }
+            fileObj.put("fileSuffix",fileSuffix);
+            fileObj.put("fileName",file.getName());
+            fileObj.put("filePath",mustStaticReadHttpPath+file.getName());
+            fileObj.put("fileTime",fileTime);
+            fileObj.put("fileSize",fileSize);
+            fileObj.put("id",index);
+            index+=1;
+            listname.add(fileObj);
+        }else if(file.isDirectory()){
+            String[] filelist=file.list();
+            for(int i = 0;i<filelist.length;i++){
+                File readfile = new File(filepath);
+                if (!readfile.isDirectory()) {
+                    JSONObject fileObj = new JSONObject();
+                    FileInputStream fis = null;
+                    FileChannel fileChannel = null;
+                    //获取文件名称
+                    String fileName = file.getName();
+                    //获取文件后缀名
+                    String fileSuffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+                    //获取文件最后的修改时间
+                    long changeTime = file.lastModified();
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    cal.setTimeInMillis(changeTime);
+                    String fileTime = formatter.format(cal.getTime());
+                    //获取文件大小
+                    String fileSize;
+                    fis = new FileInputStream(file);
+                    fileChannel = fis.getChannel();
+                    DecimalFormat df = new DecimalFormat("0");
+                    if((double)((double) fis.available() / 1024) > 1000) {
+                        fileSize= df.format((double)((double) fileChannel.size() / 1024 / 1024)) + "M";
+                    } else {
+                        fileSize= df.format((double)((double) fis.available() / 1024)) + "K";
+                    }
+                    fileObj.put("fileSuffix",fileSuffix);
+                    fileObj.put("fileName",file.getName());
+                    fileObj.put("filePath",mustStaticReadHttpPath+file.getName());
+                    fileObj.put("fileTime",fileTime);
+                    fileObj.put("fileSize",fileSize);
+                    fileObj.put("id",index);
+                    index+=1;
+                    listname.add(fileObj);
+                } else if (readfile.isDirectory()) {
+                    readAllFile(filepath + "\\" + filelist[i],listname,mustStaticReadHttpPath,index);//递归
+                }
+            }
+        }
+
     }
 }

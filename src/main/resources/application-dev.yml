@@ -33,8 +33,12 @@ mybatis:
 #配置虚拟路径的映射
 vocs:
     fileUpload:
-      rootSavePath: D:\\图片上传位置\\upload
+      rootSavePath: D:\\图片上传位置\\upload\\
       rootHttpPath: /uploadPicName/**
+      rootRealHttpPath: /uploadPicName/
+      mustReadSavePath: D:\\必读文件位置\\fileListMustRead\\
+      mustReadHttpPath: /mustReadpath/**
+      mustReadRealHttpPath: /mustReadpath/
 #showSql
 logging:
   level:

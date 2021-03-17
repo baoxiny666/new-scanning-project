@@ -80,7 +80,7 @@
                 #{recordStatus},
                 #{userInfo.userNo},
                 #{userInfo.userName},
-                #{userInfo.userPhoto},
+                #{userInfo.userPhone},
                 #{actionDesc},
                 #{actionImages},
                 STR_TO_DATE(#{actionTime}, '%Y-%m-%d %H:%i:%s'),
