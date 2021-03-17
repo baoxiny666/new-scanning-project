@@ -124,8 +124,8 @@ public class SafeScanController {
         obj.put("data",map);
         return obj.toJSONString();
     }
-    //我上报的点击详情进入页面
-    @RequestMapping("/showMyListRecord")
+    //2021-0316 在我上报的内容中也加入了审核归档内容--暂定 我上报的点击详情进入页面
+ /*   @RequestMapping("/showMyListRecord")
     @ResponseBody
     private String showMyListRecord(String  id,String userNo) {
 
@@ -469,8 +469,126 @@ public class SafeScanController {
             return obj.toJSONString();
         }
         return null;
-    }
+    }*/
 
+    @RequestMapping("/showMyListRecord")
+    @ResponseBody
+    private String showMyListRecord(String  id,String userNo) {
+
+        try {
+            //总的jsonObject
+            JSONObject jsonObject = new JSONObject();
+            //首先去查询当前记录id对应的内容
+            MyUploadList myUploadListDetail = safeScanService.selectCurrentIdDetail(id);
+            //将数据库存储的itemids存到数据库的RecordItems字段内
+            myUploadListDetail.setRecordItems(JSONArray.fromObject(myUploadListDetail.getItemIds()));
+
+            //去scan_action表中去查询记录
+            List stepInfoList = new ArrayList();
+            List stepInfoEncodeList = new ArrayList();
+            List<ScanMyListAction> scanMyListActionsList = safeScanService.selectScanActionRecords(id);
+            for (int stepInfoIndex = 0; stepInfoIndex < scanMyListActionsList.size(); stepInfoIndex++) {
+                HashMap<String, String> stepInfoHashMap = new HashMap<>();
+                stepInfoHashMap.put("title", scanMyListActionsList.get(stepInfoIndex).getActionTypeName());
+                stepInfoHashMap.put("desc", scanMyListActionsList.get(stepInfoIndex).getActionUserName() + " " + scanMyListActionsList.get(stepInfoIndex).getActionTime());
+                stepInfoList.add(stepInfoHashMap);
+                stepInfoEncodeList.add(scanMyListActionsList.get(stepInfoIndex).getActionType());
+            }
+            Integer actionType = scanMyListActionsList.get(scanMyListActionsList.size() - 1).getActionType();
+            if(1 == actionType){
+                JSONObject obj = new JSONObject();
+                obj.put("isVerify",0);
+                obj.put("isHandle",0);
+                obj.put("isDone",0);
+                obj.put("recordInfo",myUploadListDetail);
+                obj.put("stepInfo",stepInfoList);
+                obj.put("actionInfo",new Object[0]);
+                jsonObject.put("code",200);
+                jsonObject.put("message","读取记录信息成功");
+                jsonObject.put("data",obj);
+                return jsonObject.toJSONString();
+            }else if(2 == actionType){
+                JSONObject obj = new JSONObject();
+                obj.put("isVerify",0);
+                obj.put("isHandle",0);
+                obj.put("isDone",0);
+                obj.put("recordInfo",myUploadListDetail);
+                obj.put("stepInfo",stepInfoList);
+                obj.put("actionInfo",new Object[0]);
+                jsonObject.put("code",200);
+                jsonObject.put("message","读取记录信息成功");
+                jsonObject.put("data",obj);
+                return jsonObject.toJSONString();
+            }else if(3 == actionType){
+                JSONObject obj = new JSONObject();
+                obj.put("isVerify",0);
+                obj.put("isHandle",0);
+                obj.put("isDone",0);
+                obj.put("recordInfo",myUploadListDetail);
+                obj.put("stepInfo",stepInfoList);
+                //已经到达为 3 状态的阶段
+                List<ScanMyListAction> scanMyChargeActionList = safeScanService.selectScanActionHandle(id);
+                obj.put("actionInfo",scanMyChargeActionList);
+                jsonObject.put("code",200);
+                jsonObject.put("message","读取记录信息成功");
+                jsonObject.put("data",obj);
+                return jsonObject.toJSONString();
+            }else if(4 == actionType){
+                JSONObject obj = new JSONObject();
+                obj.put("isVerify",0);
+                obj.put("isHandle",0);
+                obj.put("isDone",0);
+                obj.put("recordInfo",myUploadListDetail);
+                obj.put("stepInfo",stepInfoList);
+                //已经到达为 3 状态的阶段
+                List<ScanMyListAction> scanMyChargeActionList = safeScanService.selectScanActionHandle(id);
+                obj.put("actionInfo",scanMyChargeActionList);
+                jsonObject.put("code",200);
+                jsonObject.put("message","读取记录信息成功");
+                jsonObject.put("data",obj);
+                return jsonObject.toJSONString();
+            }else if(0 == actionType){
+                boolean isContainsEncodeOne = stepInfoEncodeList.contains(1);
+                boolean isContainsEncodeTwo = stepInfoEncodeList.contains(2);
+                //如果两个都包含 1 ，2
+                if(isContainsEncodeOne && isContainsEncodeTwo){
+                    JSONObject obj = new JSONObject();
+                    obj.put("isVerify",0);
+                    obj.put("isHandle",0);
+                    obj.put("isDone",0);
+                    obj.put("recordInfo",myUploadListDetail);
+                    obj.put("stepInfo",stepInfoList);
+                    //已经到达为 3 状态的阶段
+                    List<ScanMyListAction> scanMyChargeActionList = safeScanService.selectScanActionHandle(id);
+                    obj.put("actionInfo",scanMyChargeActionList);
+                    jsonObject.put("code",200);
+                    jsonObject.put("message","读取记录信息成功");
+                    jsonObject.put("data",obj);
+                    return jsonObject.toJSONString();
+                }else{
+                    JSONObject obj = new JSONObject();
+                    obj.put("isVerify",0);
+                    obj.put("isHandle",0);
+                    obj.put("isDone",0);
+                    obj.put("recordInfo",myUploadListDetail);
+                    obj.put("stepInfo",stepInfoList);
+                    obj.put("actionInfo",new Object[0]);
+                    jsonObject.put("code",200);
+                    jsonObject.put("message","读取记录信息成功");
+                    jsonObject.put("data",obj);
+                    return jsonObject.toJSONString();
+                }
+
+            }
+        }catch (Exception e){
+            JSONObject obj = new JSONObject();
+            obj.put("code",407);
+            obj.put("message","读取记录信息失败");
+            obj.put("data",obj);
+            return obj.toJSONString();
+        }
+        return null;
+    }
     @RequestMapping("/uploadImg")
     @ResponseBody
     private String uploadImg(HttpServletRequest request) {

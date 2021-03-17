@@ -34,7 +34,7 @@ mybatis:
 vocs:
     fileUpload:
       rootSavePath: D:\\图片上传位置\\upload
-      rootHttpPath: /uploadPicName
+      rootHttpPath: /uploadPicName/**
 #showSql
 logging:
   level:
