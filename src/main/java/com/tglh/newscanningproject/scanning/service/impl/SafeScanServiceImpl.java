@@ -41,11 +41,7 @@ public class SafeScanServiceImpl implements SafeScanService {
 
 
 
-    @Override
-    public Map getMaxId() {
-        Map maxIdMap = safeScanMapper.getMaxId();
-        return maxIdMap;
-    }
+
 
     @Override
     public List<ScanAreaItems> areaInfoItems(String code) {
