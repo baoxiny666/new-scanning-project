@@ -10,9 +10,8 @@ public interface SafeScanService {
 
      void addRecord(ScanRecordAdvise scanRecordAdvise);
 
-     void addRecordAction(ScanRecordAdvise scanRecordAdvise);
 
-     Map getMaxId();
+
 
      List<ScanAreaItems> areaInfoItems(String code);
 

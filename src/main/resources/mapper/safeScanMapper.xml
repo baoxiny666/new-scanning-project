@@ -36,7 +36,7 @@
         from scan_records
     </select>
 
-   <insert id="addRecord"  parameterType="com.tglh.newscanningproject.scanning.entity.ScanRecordAdvise"  >
+   <insert id="addRecord"  useGeneratedKeys="true"    keyProperty="id"  parameterType="com.tglh.newscanningproject.scanning.entity.ScanRecordAdvise"  >
         insert into scan_records
             ( area_no,
              area_name,
@@ -72,8 +72,8 @@
         #{userInfo.userName},
         #{userInfo.userPhone},
         #{location.locationTotal},
-        sysdate(),
-        sysdate()
+        STR_TO_DATE(#{createTime}, '%Y-%m-%d %H:%i:%s'),
+        STR_TO_DATE(#{updateTime}, '%Y-%m-%d %H:%i:%s')
         )
     </insert>
 
@@ -92,15 +92,15 @@
              )
         values
             (
-                #{maxId},
+                #{id},
                 1,
                 #{selectItems},
                 #{userInfo.userNo},
                 #{userInfo.userName},
                 #{userInfo.userPhone},
-                sysdate(),
-                sysdate(),
-                sysdate()
+                STR_TO_DATE(#{actionTime}, '%Y-%m-%d %H:%i:%s'),
+                STR_TO_DATE(#{createTime}, '%Y-%m-%d %H:%i:%s'),
+                STR_TO_DATE(#{updateTime}, '%Y-%m-%d %H:%i:%s')
             )
     </insert>
 

@@ -9,10 +9,8 @@ import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class SafeScanServiceImpl implements SafeScanService {
@@ -28,14 +26,20 @@ public class SafeScanServiceImpl implements SafeScanService {
 
     @Override
     public void addRecord(ScanRecordAdvise scanRecordAdvise) {
+        //日期格式化打印
+        Date d = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String dateNowStr = sdf.format(d);
+        scanRecordAdvise.setActionTime(dateNowStr);
+        scanRecordAdvise.setUpdateTime(dateNowStr);
+        scanRecordAdvise.setCreateTime(dateNowStr);
         safeScanMapper.addRecord(scanRecordAdvise);
-
-    }
-
-    @Override
-    public void addRecordAction(ScanRecordAdvise scanRecordAdvise) {
+        Integer id = scanRecordAdvise.getId();
+        System.out.println(id);
         safeScanMapper.addRecordAction(scanRecordAdvise);
     }
+
+
 
     @Override
     public Map getMaxId() {

@@ -99,10 +99,9 @@ public class SafeScanController {
         String encryptedCode = AesUtil.decrypt(encrypted,AesUtil.KEY);
         JSONObject encryptedCodeObj=JSONObject.parseObject(encryptedCode);
         ScanRecordAdvise scanRecordAdvise = (ScanRecordAdvise) JSONObject.toJavaObject(encryptedCodeObj, ScanRecordAdvise.class);  //通过JSONObject.toBean()方法进行对象间的转换
-        Map maxIdMap = safeScanService.getMaxId();
-        scanRecordAdvise.setMaxId(maxIdMap.get("id").toString());
+
         safeScanService.addRecord(scanRecordAdvise);
-        safeScanService.addRecordAction(scanRecordAdvise);
+
         JSONObject obj = new JSONObject();
         Map map = new HashMap();
 
